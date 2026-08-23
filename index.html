@@ -3,68 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Leowood SPC Calculator</title>
+    <title>Leowood SPC Pro Calculator</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         body {
             font-family: 'Prompt', sans-serif;
-            background-color: #f0fdf4; /* Light green background */
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
         }
-        /* Custom Scrollbar for the output box */
         ::-webkit-scrollbar {
-            width: 8px;
+            width: 6px;
+            height: 6px;
         }
         ::-webkit-scrollbar-track {
-            background: #f1f1f1; 
+            background: #f1f1f1;
             border-radius: 4px;
         }
         ::-webkit-scrollbar-thumb {
-            background: #22c55e; 
+            background: #22c55e;
             border-radius: 4px;
         }
         ::-webkit-scrollbar-thumb:hover {
-            background: #16a34a; 
+            background: #16a34a;
         }
     </style>
 </head>
-<body class="min-h-screen p-4 md:p-8 flex justify-center items-start">
+<body class="min-h-screen py-8 px-4 sm:px-6 flex justify-center items-center">
 
-    <div class="max-w-md w-full bg-white rounded-2xl shadow-xl overflow-hidden border border-green-100">
+    <div class="max-w-2xl w-full bg-white/95 backdrop-blur-md rounded-3xl shadow-2xl overflow-hidden border border-green-100 transition-all duration-300">
         
         <!-- Header -->
-        <div class="bg-green-600 p-6 text-white text-center">
-            <h1 class="text-2xl font-semibold mb-1">✨ Leowood SPC ✨</h1>
-            <p class="text-green-100 text-sm">เครื่องมือช่วยคำนวณราคาสำหรับแอดมิน</p>
+        <div class="bg-gradient-to-r from-green-600 to-emerald-700 p-6 sm:p-8 text-white text-center relative overflow-hidden">
+            <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
+            <div class="absolute -left-10 -top-10 w-40 h-40 bg-emerald-400/20 rounded-full blur-2xl pointer-events-none"></div>
+            <h1 class="text-2xl sm:text-3xl font-bold tracking-wide mb-1 relative z-10">✨ LEOWOOD SPC ✨</h1>
+            <p class="text-green-100 text-xs sm:text-sm tracking-wide relative z-10">ระบบคำนวณราคาและอุปกรณ์เสริมอัจฉริยะสำหรับแอดมิน</p>
         </div>
 
         <!-- Form Content -->
-        <div class="p-6 space-y-4">
+        <div class="p-6 sm:p-8 space-y-6">
             
-            <div class="grid grid-cols-2 gap-4">
+            <!-- Main Inputs Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 <!-- Area Input -->
-                <div>
-                    <label for="area" class="block text-sm font-medium text-gray-700 mb-1">ขนาดพื้นที่ (ตร.ม.)</label>
-                    <input type="number" id="area" placeholder="เช่น 60" 
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition"
-                        oninput="calculate()">
+                <div class="space-y-1.5">
+                    <label for="area" class="block text-xs font-semibold text-gray-700 uppercase tracking-wider">ขนาดพื้นที่หน้างาน (ตร.ม.) <span class="text-red-500">*</span></label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/></svg>
+                        </span>
+                        <input type="number" id="area" placeholder="เช่น 45" 
+                            class="w-full pl-10 pr-4 py-3 bg-gray-50/50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition font-medium text-gray-800"
+                            oninput="calculate()">
+                    </div>
                 </div>
                 
-                <!-- Sqm Per Box Input -->
-                <div>
-                    <label for="sqmPerBox" class="block text-sm font-medium text-gray-700 mb-1">ตร.ม./กล่อง</label>
-                    <input type="number" id="sqmPerBox" value="2.67" step="0.01"
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition bg-gray-50"
-                        oninput="calculate()">
+                <!-- Sqm Per Box Input (Locked/Auto) -->
+                <div class="space-y-1.5">
+                    <label for="sqmPerBox" class="block text-xs font-semibold text-gray-700 uppercase tracking-wider">ตร.ม. / กล่อง (คำนวณอัตโนมัติ)</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+                        </span>
+                        <input type="number" id="sqmPerBox" value="2.67" step="0.01" readonly
+                            class="w-full pl-10 pr-4 py-3 bg-gray-100 border border-gray-200 rounded-xl text-gray-600 font-semibold cursor-not-allowed outline-none">
+                    </div>
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 <!-- Product Option -->
-                <div>
-                    <label for="productSelect" class="block text-sm font-medium text-gray-700 mb-1">ประเภทและราคา</label>
-                    <select id="productSelect" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none bg-white text-sm" onchange="handleProductChange(); calculate();">
+                <div class="space-y-1.5">
+                    <label for="productSelect" class="block text-xs font-semibold text-gray-700 uppercase tracking-wider">ประเภทและรุ่นสินค้า</label>
+                    <select id="productSelect" class="w-full px-4 py-3 bg-gray-50/50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none text-sm font-medium text-gray-800" onchange="handleProductChange(); calculate();">
                         <optgroup label="ความหนา 5 มม. (ปูตรง)">
                             <option value="459_5_wood_straight">5 มม. ปูตรง เฉพาะไม้ (459.-)</option>
                             <option value="659_5_install_straight">5 มม. ปูตรง พร้อมติดตั้ง (659.-)</option>
@@ -93,10 +105,10 @@
                 </div>
                 
                 <!-- Waste Margin Option -->
-                <div>
-                    <label for="waste" class="block text-sm font-medium text-gray-700 mb-1">เผื่อตัดเข้ามุม (%)</label>
-                    <select id="waste" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none bg-white text-sm" onchange="calculate()">
-                        <option value="5">5% (มาตรฐาน/ปูตรง)</option>
+                <div class="space-y-1.5">
+                    <label for="waste" class="block text-xs font-semibold text-gray-700 uppercase tracking-wider">เผื่อตัดเข้ามุม (Waste)</label>
+                    <select id="waste" class="w-full px-4 py-3 bg-gray-50/50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none text-sm font-medium text-gray-800" onchange="calculate()">
+                        <option value="5">5% (มาตรฐาน / ปูตรงทั่วไป)</option>
                         <option value="7">7% (ปูตรงห้องซับซ้อน)</option>
                         <option value="18" selected>18% (ลายก้างปลา)</option>
                     </select>
@@ -104,134 +116,224 @@
             </div>
 
             <!-- Promo Price Toggle -->
-            <div class="bg-green-50 p-3 rounded-lg border border-green-100">
+            <div class="bg-gradient-to-br from-green-50 to-emerald-50 p-4 rounded-2xl border border-green-200/60 shadow-sm space-y-3">
                 <div class="flex items-center">
-                    <input type="checkbox" id="isPromo" class="w-4 h-4 text-green-600 rounded border-gray-300 focus:ring-green-500" onchange="togglePromo(); calculate();">
-                    <label for="isPromo" class="ml-2 text-sm font-medium text-gray-700">ระบุราคาจัดโปรโมชั่น / กำหนดราคาเอง</label>
+                    <input type="checkbox" id="isPromo" class="w-5 h-5 text-green-600 rounded border-gray-300 focus:ring-green-500 cursor-pointer" onchange="togglePromo(); calculate();">
+                    <label for="isPromo" class="ml-2.5 text-sm font-semibold text-green-900 cursor-pointer">ระบุราคาจัดโปรโมชั่น / กำหนดราคาพิเศษเอง</label>
                 </div>
-                <div id="promoPriceDiv" class="hidden mt-3">
-                    <label for="promoPrice" class="block text-xs font-medium text-gray-700 mb-1">ราคาโปรโมชั่น ต่อ ตร.ม. (บาท)</label>
+                <div id="promoPriceDiv" class="hidden pt-1">
+                    <label for="promoPrice" class="block text-xs font-medium text-green-800 mb-1">ราคาโปรโมชั่น ต่อ ตร.ม. (บาท)</label>
                     <input type="number" id="promoPrice" placeholder="เช่น 359" 
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition"
+                        class="w-full px-4 py-2.5 bg-white border border-green-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition text-sm font-medium"
                         oninput="calculate()">
                 </div>
             </div>
 
-            <hr class="my-4 border-gray-200">
+            <!-- Accessories Section -->
+            <div class="bg-gray-50 p-5 rounded-2xl border border-gray-200/80 space-y-4">
+                <div class="flex items-center justify-between border-b border-gray-200 pb-2">
+                    <h3 class="text-sm font-bold text-gray-800 flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+                        หมวดอุปกรณ์เสริม (Accessories)
+                    </h3>
+                    <span id="accServiceBadge" class="text-xs bg-green-100 text-green-700 px-2.5 py-1 rounded-full font-medium">โหมด: พร้อมติดตั้ง</span>
+                </div>
 
-            <!-- Result Display -->
-            <div class="relative">
-                <div class="absolute top-2 right-2 flex gap-2">
-                    <button onclick="generateImage()" class="bg-blue-100 hover:bg-blue-200 text-blue-700 px-3 py-1.5 rounded-md text-xs font-medium transition shadow-sm flex items-center gap-1">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                        </svg>
-                        สร้างรูปภาพ
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+                    <!-- Skirting Boards -->
+                    <div class="space-y-3 bg-white p-3.5 rounded-xl border border-gray-100 shadow-sm">
+                        <label class="block font-semibold text-gray-700 text-xs uppercase tracking-wide">บัวเชิงผนัง / ตัวจบ</label>
+                        
+                        <div id="skirt2inContainer" class="hidden items-center justify-between gap-2">
+                            <span class="text-xs text-gray-600" id="skirt2Label">ขนาด 2 นิ้ว (120.-/เส้น)</span>
+                            <div class="flex items-center gap-1">
+                                <input type="number" id="skirt2in" placeholder="0" min="0" class="w-16 px-2 py-1 bg-gray-50 border border-gray-200 rounded-lg text-center text-xs font-semibold focus:ring-1 focus:ring-green-500 outline-none" oninput="calculate()">
+                                <span class="text-xs text-gray-500">เส้น</span>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between gap-2">
+                            <span class="text-xs text-gray-600" id="skirt3inLabel">ขนาด 3 นิ้ว (15.-/เส้น)</span>
+                            <div class="flex items-center gap-1">
+                                <input type="number" id="skirt3in" placeholder="0" min="0" class="w-16 px-2 py-1 bg-gray-50 border border-gray-200 rounded-lg text-center text-xs font-semibold focus:ring-1 focus:ring-green-500 outline-none" oninput="calculate()">
+                                <span class="text-xs text-gray-500">เส้น</span>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between gap-2">
+                            <span class="text-xs text-gray-600" id="skirt4inLabel">ขนาด 4 นิ้ว (30.-/เส้น)</span>
+                            <div class="flex items-center gap-1">
+                                <input type="number" id="skirt4in" placeholder="0" min="0" class="w-16 px-2 py-1 bg-gray-50 border border-gray-200 rounded-lg text-center text-xs font-semibold focus:ring-1 focus:ring-green-500 outline-none" oninput="calculate()">
+                                <span class="text-xs text-gray-500">เส้น</span>
+                            </div>
+                        </div>
+
+                        <div id="skirtExtraContainer" class="space-y-1 pt-1 border-t border-gray-100">
+                            <div class="flex items-center justify-between gap-2">
+                                <span class="text-xs text-gray-700 font-medium" id="skirtExtraLabel">บัวนอกเนื้อพื้นที่ติดตั้ง</span>
+                                <div class="flex items-center gap-1">
+                                    <input type="number" id="skirtExtraQty" placeholder="0" min="0" class="w-16 px-2 py-1 bg-gray-50 border border-gray-200 rounded-lg text-center text-xs font-semibold focus:ring-1 focus:ring-green-500 outline-none" oninput="calculate()">
+                                    <span class="text-xs text-gray-500">เส้น</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between gap-2">
+                                <span class="text-[11px] text-gray-400">ราคาต่อเส้น (บาท):</span>
+                                <input type="number" id="skirtExtraPrice" value="50" min="0" class="w-20 px-2 py-0.5 bg-gray-50 border border-gray-200 rounded text-center text-xs font-medium focus:ring-1 focus:ring-green-500 outline-none" oninput="calculate()">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Foam & Sealants (Hidden when installed) -->
+                    <div id="foamSealantGroup" class="space-y-3 bg-white p-3.5 rounded-xl border border-gray-100 shadow-sm">
+                        <label class="block font-semibold text-gray-700 text-xs uppercase tracking-wide">โฟม และ กาว / ยาแนว</label>
+                        
+                        <div class="flex items-center justify-between gap-2">
+                            <span class="text-xs text-gray-600">แผ่นโฟมรองพื้น (159.-/ม้วน)</span>
+                            <div class="flex items-center gap-1">
+                                <input type="number" id="foamRolls" placeholder="0" min="0" class="w-16 px-2 py-1 bg-gray-50 border border-gray-200 rounded-lg text-center text-xs font-semibold focus:ring-1 focus:ring-green-500 outline-none" oninput="calculate()">
+                                <span class="text-xs text-gray-500">ม้วน</span>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between gap-2">
+                            <span class="text-xs text-gray-600">ยาแนวอะคริลิค (80.-/หลอด)</span>
+                            <div class="flex items-center gap-1">
+                                <input type="number" id="acrylicSealant" placeholder="0" min="0" class="w-16 px-2 py-1 bg-gray-50 border border-gray-200 rounded-lg text-center text-xs font-semibold focus:ring-1 focus:ring-green-500 outline-none" oninput="calculate()">
+                                <span class="text-xs text-gray-500">หลอด</span>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between gap-2">
+                            <span class="text-xs text-gray-600">กาวตะปู (120.-/หลอด)</span>
+                            <div class="flex items-center gap-1">
+                                <input type="number" id="nailGlue" placeholder="0" min="0" class="w-16 px-2 py-1 bg-gray-50 border border-gray-200 rounded-lg text-center text-xs font-semibold focus:ring-1 focus:ring-green-500 outline-none" oninput="calculate()">
+                                <span class="text-xs text-gray-500">หลอด</span>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between gap-2">
+                            <span class="text-xs text-gray-600">ยาแนวซิลิโคน (139.-/หลอด)</span>
+                            <div class="flex items-center gap-1">
+                                <input type="number" id="siliconeSealant" placeholder="0" min="0" class="w-16 px-2 py-1 bg-gray-50 border border-gray-200 rounded-lg text-center text-xs font-semibold focus:ring-1 focus:ring-green-500 outline-none" oninput="calculate()">
+                                <span class="text-xs text-gray-500">หลอด</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Result Display Box -->
+            <div class="relative pt-2">
+                <div class="absolute top-5 right-3 flex gap-2 z-10">
+                    <button onclick="generateImage()" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-lg text-xs font-medium transition shadow-sm flex items-center gap-1.5 cursor-pointer">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                        สร้างรูปภาพใบเสนอราคา
                     </button>
-                    <button onclick="copyToClipboard()" class="bg-green-100 hover:bg-green-200 text-green-700 px-3 py-1.5 rounded-md text-xs font-medium transition shadow-sm flex items-center gap-1">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                        </svg>
-                        คัดลอก
+                    <button onclick="copyToClipboard()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg text-xs font-medium transition shadow-sm flex items-center gap-1.5 cursor-pointer">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                        คัดลอกข้อความ
                     </button>
                 </div>
-                <!-- Output Textarea (Readonly) -->
+                <!-- Output Textarea -->
                 <textarea id="outputText" readonly
-                    class="w-full h-80 p-4 pt-10 bg-gray-50 border border-gray-200 rounded-xl text-gray-800 text-sm resize-none focus:outline-none focus:ring-1 focus:ring-green-500 font-sans leading-relaxed"></textarea>
+                    class="w-full h-80 p-4 pt-12 bg-gray-900 text-emerald-300 font-mono text-xs sm:text-sm rounded-2xl resize-none focus:outline-none shadow-inner leading-relaxed border border-gray-800"></textarea>
             </div>
 
         </div>
     </div>
 
-    <!-- Toast Notification for Copy -->
-    <div id="toast" class="fixed bottom-10 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white px-6 py-3 rounded-full shadow-lg transition-opacity duration-300 opacity-0 pointer-events-none flex items-center gap-2">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
-            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-        </svg>
-        คัดลอกข้อความแล้ว!
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-10 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white px-6 py-3 rounded-2xl shadow-2xl transition-all duration-300 opacity-0 pointer-events-none flex items-center gap-3 border border-gray-800 z-50">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+        <span id="toastText" class="font-medium text-sm">คัดลอกข้อความสำเร็จ!</span>
     </div>
 
+    <!-- Hidden Receipt Template for Image Export -->
     <div style="position: absolute; left: -9999px; top: 0;">
-        <div id="receipt-template" class="bg-white w-[400px] p-0 rounded-xl shadow-2xl overflow-hidden border border-gray-100 font-sans">
-            <!-- Header -->
-            <div class="bg-green-600 p-5 text-center relative">
-                <div class="absolute top-0 left-0 w-full h-full opacity-10" style="background-image: radial-gradient(circle, white 2px, transparent 2px); background-size: 15px 15px;"></div>
-                <h2 class="text-white text-2xl font-bold tracking-wider relative z-10">LEOWOOD</h2>
-                <p class="text-green-100 text-sm mt-1 relative z-10">ใบประเมินราคาเบื้องต้น (ไม้พื้น SPC)</p>
+        <div id="receipt-template" class="bg-white w-[420px] p-0 rounded-2xl shadow-2xl overflow-hidden border border-gray-100 font-sans">
+            <div class="bg-gradient-to-r from-green-600 to-emerald-700 p-6 text-center relative">
+                <h2 class="text-white text-2xl font-bold tracking-widest">LEOWOOD</h2>
+                <p class="text-green-100 text-xs mt-1">ใบประเมินราคาและอุปกรณ์เสริม (SPC)</p>
             </div>
             
-            <!-- Details -->
             <div class="p-6 space-y-4">
-                <div class="text-right text-xs text-gray-500 mb-2" id="receipt-date"></div>
+                <div class="text-right text-xs text-gray-400" id="receipt-date"></div>
                 
-                <div class="bg-gray-50 p-3 rounded-lg border border-gray-100">
-                    <div class="font-semibold text-gray-800 text-sm" id="receipt-product">ไม้พื้น SPC</div>
-                    <div class="text-xs text-gray-500 mt-1" id="receipt-pattern">แบบปูตรง (พร้อมติดตั้ง)</div>
+                <div class="bg-gray-50 p-3.5 rounded-xl border border-gray-100">
+                    <div class="font-bold text-gray-800 text-sm" id="receipt-product">ไม้พื้น SPC</div>
+                    <div class="text-xs text-gray-500 mt-0.5" id="receipt-pattern">แบบปูตรง (พร้อมติดตั้ง)</div>
+                    <div class="text-[11px] text-green-600 font-medium mt-1" id="receipt-sqm-box">1 กล่องปูได้ 2.67 ตร.ม.</div>
                 </div>
 
-                <div class="space-y-2 text-sm">
+                <div class="space-y-2 text-xs text-gray-600">
                     <div class="flex justify-between">
-                        <span class="text-gray-600">พื้นที่หน้างาน:</span>
-                        <span class="font-medium text-gray-800" id="receipt-area">0 ตร.ม.</span>
+                        <span>พื้นที่หน้างาน:</span>
+                        <span class="font-semibold text-gray-800" id="receipt-area">0 ตร.ม.</span>
                     </div>
                     <div class="flex justify-between">
-                        <span class="text-gray-600">เผื่อตัดเข้ามุม (Waste):</span>
-                        <span class="font-medium text-gray-800" id="receipt-waste">5%</span>
+                        <span>เผื่อตัดเข้ามุม (Waste):</span>
+                        <span class="font-semibold text-gray-800" id="receipt-waste">18%</span>
                     </div>
                     <div class="flex justify-between">
-                        <span class="text-gray-600">พื้นที่ใช้คำนวณรวม:</span>
-                        <span class="font-medium text-green-600" id="receipt-total-area">0 ตร.ม.</span>
+                        <span>พื้นที่รวมเผื่อตัด:</span>
+                        <span class="font-semibold text-green-600" id="receipt-total-area">0 ตร.ม.</span>
                     </div>
                 </div>
                 
-                <hr class="border-dashed border-gray-300">
+                <hr class="border-dashed border-gray-200">
 
-                <div class="space-y-2 text-sm">
-                    <div class="flex justify-between">
-                        <span class="text-gray-600">จำนวนที่ต้องใช้:</span>
-                        <span class="font-bold text-gray-800 text-base" id="receipt-boxes">0 กล่อง</span>
+                <div class="space-y-2 text-xs text-gray-600">
+                    <div class="flex justify-between items-center">
+                        <span>จำนวนกล่องไม้พื้น:</span>
+                        <span class="font-bold text-gray-900 text-sm" id="receipt-boxes">0 กล่อง</span>
                     </div>
-                    <div class="flex justify-between">
-                        <span class="text-gray-500 text-xs" id="receipt-price-detail">ราคา 0 บาท/กล่อง</span>
+                    <div class="flex justify-between text-[11px] text-gray-500">
+                        <span id="receipt-box-sub">ราคารวมไม้พื้น</span>
+                        <span id="receipt-box-total">0.00 ฿</span>
                     </div>
                 </div>
 
-                <!-- Total -->
-                <div class="bg-green-50 p-4 rounded-xl border border-green-200 mt-4">
-                    <div class="text-center text-green-800 text-xs font-medium mb-1">ยอดรวมประเมิน (บาท)</div>
-                    <div class="text-center text-3xl font-bold text-green-600" id="receipt-total-price">0.00</div>
+                <div id="receipt-acc-section" class="space-y-1.5 text-xs text-gray-600 border-t border-dashed border-gray-200 pt-3 hidden">
+                    <div class="font-semibold text-gray-700 text-[11px] uppercase tracking-wider mb-1">รายการอุปกรณ์เสริม</div>
+                    <div id="receipt-acc-items" class="space-y-1"></div>
+                    <div class="flex justify-between text-[11px] text-gray-500 pt-1">
+                        <span>รวมอุปกรณ์เสริม</span>
+                        <span id="receipt-acc-total">0.00 ฿</span>
+                    </div>
+                </div>
+
+                <!-- Total Box -->
+                <div class="bg-green-50 p-4 rounded-xl border border-green-200 mt-4 text-center">
+                    <div class="text-green-800 text-[11px] font-bold uppercase tracking-wider mb-1">ยอดรวมประเมินทั้งหมด</div>
+                    <div class="text-3xl font-extrabold text-green-600" id="receipt-total-price">0.00 ฿</div>
                 </div>
                 
-                <div class="text-center text-[10px] text-gray-400 mt-4">
+                <div class="text-center text-[10px] text-gray-400 pt-2">
                     *ราคานี้เป็นการประเมินเบื้องต้น อาจมีการเปลี่ยนแปลงตามหน้างานจริง<br>
-                    ขอบคุณที่ไว้วางใจ Leowood ค่ะ
+                    ขอบคุณที่ไว้วางใจ Leowood ค่ะ 🙏
                 </div>
             </div>
         </div>
     </div>
 
-    <div id="imageModal" class="fixed inset-0 bg-black/60 z-50 hidden flex-col items-center justify-center p-4 backdrop-blur-sm transition-opacity">
-        <div class="bg-white rounded-2xl max-w-sm w-full overflow-hidden shadow-2xl transform transition-all">
+    <!-- Modal Preview Image -->
+    <div id="imageModal" class="fixed inset-0 bg-black/70 z-50 hidden flex-col items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white rounded-3xl max-w-sm w-full overflow-hidden shadow-2xl flex flex-col max-h-[90vh]">
             <div class="p-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
-                <h3 class="font-medium text-gray-800">รูปภาพใบประเมินราคา</h3>
-                <button onclick="closeImageModal()" class="text-gray-400 hover:text-gray-600 bg-white rounded-full p-1 shadow-sm">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
-                    </svg>
+                <h3 class="font-bold text-gray-800 text-sm">รูปภาพใบเสนอราคา</h3>
+                <button onclick="closeImageModal()" class="text-gray-400 hover:text-gray-600 bg-white rounded-full p-1.5 shadow-sm border border-gray-200 cursor-pointer">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
                 </button>
             </div>
-            <div class="p-6 bg-gray-100 flex justify-center items-center h-80 overflow-y-auto">
-                <!-- Image Preview -->
-                <img id="previewImage" src="" alt="Quotation Preview" class="max-w-full h-auto drop-shadow-lg rounded">
+            <div class="p-6 bg-gray-100 flex justify-center items-center overflow-y-auto flex-1">
+                <img id="previewImage" src="" alt="Quotation Preview" class="max-w-full h-auto shadow-xl rounded-xl">
             </div>
-            <div class="p-4 bg-white grid grid-cols-2 gap-3">
-                <button onclick="closeImageModal()" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition">
-                    ปิด
+            <div class="p-4 bg-white grid grid-cols-2 gap-3 border-t border-gray-100">
+                <button onclick="closeImageModal()" class="px-4 py-2.5 text-xs font-semibold text-gray-700 bg-gray-100 rounded-xl hover:bg-gray-200 transition cursor-pointer">
+                    ปิดหน้าต่าง
                 </button>
-                <button onclick="downloadImage()" class="px-4 py-2 text-sm font-medium text-white bg-green-600 border border-transparent rounded-lg hover:bg-green-700 transition shadow-md flex items-center justify-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                    </svg>
+                <button onclick="downloadImage()" class="px-4 py-2.5 text-xs font-semibold text-white bg-green-600 rounded-xl hover:bg-green-700 transition shadow-md flex items-center justify-center gap-2 cursor-pointer">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
                     บันทึกรูปภาพ
                 </button>
             </div>
@@ -239,69 +341,78 @@
     </div>
 
     <script>
-        // Number formatting helper
-        const formatMoney = (num) => {
-            return num.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-        };
-
-        const formatNumber = (num) => {
-            return parseFloat(num.toFixed(2)).toString(); // Removes trailing zeros for standard numbers
-        };
+        // Formatting Helpers
+        const formatMoney = (num) => num.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        const formatNumber = (num) => parseFloat(num.toFixed(2)).toString();
 
         function handleProductChange() {
             const productSelect = document.getElementById('productSelect').value;
             const sqmInput = document.getElementById('sqmPerBox');
             const wasteSelect = document.getElementById('waste');
+            const badge = document.getElementById('accServiceBadge');
             
             const parts = productSelect.split('_');
             const thicknessStr = parts[1];
+            const serviceType = parts[2]; // wood or install
             const patternType = parts[3]; // straight or herringbone
             
-            // Auto-fill Sqm per box based on selected thickness and pattern
+            // Set Sqm per box
             if (patternType === 'herringbone') {
-                if (thicknessStr === '5') {
-                    sqmInput.value = 2.70;
-                } else if (thicknessStr === '6') {
-                    sqmInput.value = 2.25;
-                }
-                // Auto switch waste to 18% for herringbone
+                if (thicknessStr === '5') sqmInput.value = 2.70;
+                else if (thicknessStr === '6') sqmInput.value = 2.25;
                 wasteSelect.value = "18";
             } else {
-                if (thicknessStr === '5') {
-                    sqmInput.value = 2.67;
-                } else if (thicknessStr === '6') {
-                    sqmInput.value = 2.76;
-                } else if (thicknessStr === '8') {
-                    sqmInput.value = 2.07;
-                } else if (thicknessStr === 'ISF') {
-                    sqmInput.value = 2.20;
-                }
-                // Auto switch waste to 5% for straight
+                if (thicknessStr === '5') sqmInput.value = 2.67;
+                else if (thicknessStr === '6') sqmInput.value = 2.76;
+                else if (thicknessStr === '8') sqmInput.value = 2.07;
+                else if (thicknessStr === 'ISF') sqmInput.value = 2.20;
                 wasteSelect.value = "5";
+            }
+
+            // Update UI based on service type
+            const isInstall = serviceType === 'install';
+            badge.innerText = isInstall ? "โหมด: พร้อมติดตั้ง" : "โหมด: เฉพาะไม้";
+            badge.className = isInstall ? "text-xs bg-green-100 text-green-700 px-2.5 py-1 rounded-full font-medium" : "text-xs bg-amber-100 text-amber-700 px-2.5 py-1 rounded-full font-medium";
+
+            // Toggle UI elements for accessories
+            const skirt2Container = document.getElementById('skirt2inContainer');
+            const foamSealantGroup = document.getElementById('foamSealantGroup');
+
+            if (isInstall) {
+                skirt2Container.classList.add('hidden');
+                foamSealantGroup.classList.add('hidden');
+                document.getElementById('skirt3inLabel').innerText = "ขนาด 3 นิ้ว (15.-/เส้น)";
+                document.getElementById('skirt4inLabel').innerText = "ขนาด 4 นิ้ว (30.-/เส้น)";
+            } else {
+                skirt2Container.classList.remove('hidden');
+                foamSealantGroup.classList.remove('hidden');
+                document.getElementById('skirt2Label').innerText = "ขนาด 2 นิ้ว (120.-/เส้น)";
+                document.getElementById('skirt3inLabel').innerText = "ขนาด 3 นิ้ว (135.-/เส้น)";
+                document.getElementById('skirt4inLabel').innerText = "ขนาด 4 นิ้ว (150.-/เส้น)";
             }
         }
 
         function togglePromo() {
             const isPromo = document.getElementById('isPromo').checked;
-            const promoPriceDiv = document.getElementById('promoPriceDiv');
-            
+            const promoDiv = document.getElementById('promoPriceDiv');
             if (isPromo) {
-                promoPriceDiv.classList.remove('hidden');
+                promoDiv.classList.remove('hidden');
                 document.getElementById('promoPrice').focus();
             } else {
-                promoPriceDiv.classList.add('hidden');
-                document.getElementById('promoPrice').value = ''; // clear promo input when disabled
+                promoDiv.classList.add('hidden');
+                document.getElementById('promoPrice').value = '';
             }
         }
 
-        // ตัวแปรเก็บค่าการคำนวณล่าสุดเพื่อนำไปสร้างรูปภาพ
         let currentCalcData = null;
 
         function calculate() {
-            // Get values
             const areaInput = document.getElementById('area').value;
+            const outputBox = document.getElementById('outputText');
+
             if (!areaInput || areaInput <= 0) {
-                document.getElementById('outputText').value = "กรุณากรอกขนาดพื้นที่ (ตร.ม.) เพื่อเริ่มต้นคำนวณครับ 😊";
+                outputBox.value = "💡 กรุณากรอกขนาดพื้นที่หน้างาน (ตร.ม.) เพื่อเริ่มต้นคำนวณราคาครับ";
+                currentCalcData = null;
                 return;
             }
 
@@ -310,111 +421,184 @@
             const wastePercent = parseFloat(document.getElementById('waste').value);
             const sqmPerBox = parseFloat(document.getElementById('sqmPerBox').value) || 2.67;
 
-            let pricePerSqm, thicknessStr, serviceType, patternType;
-
             const parts = productVal.split('_');
-            pricePerSqm = parseFloat(parts[0]);
-            thicknessStr = parts[1];
-            serviceType = parts[2];
-            patternType = parts[3];
-            
-            // Check if promo price is active
-            const isPromo = document.getElementById('isPromo').checked;
-            if (isPromo) {
+            let pricePerSqm = parseFloat(parts[0]);
+            const thicknessStr = parts[1];
+            const serviceType = parts[2];
+            const patternType = parts[3];
+
+            if (document.getElementById('isPromo').checked) {
                 const promoVal = parseFloat(document.getElementById('promoPrice').value);
-                if (promoVal > 0) {
-                    pricePerSqm = promoVal;
-                }
+                if (promoVal > 0) pricePerSqm = promoVal;
             }
-            
-            // คำนวณพื้นที่และจำนวนกล่อง
+
+            // Box calculations with .3 rounding logic
             const areaWithWaste = area * (1 + (wastePercent / 100));
             const pricePerBox = pricePerSqm * sqmPerBox;
             const exactBoxes = areaWithWaste / sqmPerBox;
-            
-            // ตรรกะปัดเศษใหม่: เศษ .0-.29 ปัดลง, .3-.99 ปัดขึ้น
             const integerPart = Math.floor(exactBoxes);
             const decimalPart = exactBoxes - integerPart;
             const boxesNeeded = integerPart + (decimalPart >= 0.3 ? 1 : 0);
-            
-            const totalPrice = boxesNeeded * pricePerBox;
+            const totalWoodPrice = boxesNeeded * pricePerBox;
 
-            // Generate Strings
+            // Accessories inputs
+            const isInstall = serviceType === 'install';
+            
+            let skirt2Qty = 0, skirt3inQty = 0, skirt4inQty = 0;
+            let skirt2PriceUnit = 120, skirt3inPriceUnit = isInstall ? 15 : 135, skirt4inPriceUnit = isInstall ? 30 : 150;
+
+            if (!isInstall) {
+                skirt2Qty = parseInt(document.getElementById('skirt2in').value) || 0;
+            }
+            skirt3inQty = parseInt(document.getElementById('skirt3in').value) || 0;
+            skirt4inQty = parseInt(document.getElementById('skirt4in').value) || 0;
+
+            const skirtExtraQty = parseInt(document.getElementById('skirtExtraQty').value) || 0;
+            const skirtExtraPriceUnit = parseFloat(document.getElementById('skirtExtraPrice').value) || 0;
+
+            const totalSkirt2 = skirt2Qty * skirt2PriceUnit;
+            const totalSkirt3 = skirt3inQty * skirt3inPriceUnit;
+            const totalSkirt4 = skirt4inQty * skirt4inPriceUnit;
+            const totalSkirtExtra = skirtExtraQty * skirtExtraPriceUnit;
+
+            let foamQty = 0, foamPrice = 0;
+            let acrylicQty = 0, acrylicPrice = 0;
+            let nailGlueQty = 0, nailGluePrice = 0;
+            let siliconeQty = 0, siliconePrice = 0;
+
+            if (!isInstall) {
+                foamQty = parseInt(document.getElementById('foamRolls').value) || 0;
+                foamPrice = foamQty * 159;
+
+                acrylicQty = parseInt(document.getElementById('acrylicSealant').value) || 0;
+                acrylicPrice = acrylicQty * 80;
+
+                nailGlueQty = parseInt(document.getElementById('nailGlue').value) || 0;
+                nailGluePrice = nailGlueQty * 120;
+
+                siliconeQty = parseInt(document.getElementById('siliconeSealant').value) || 0;
+                siliconePrice = siliconeQty * 139;
+            }
+
+            const totalAccessories = totalSkirt2 + totalSkirt3 + totalSkirt4 + totalSkirtExtra + foamPrice + acrylicPrice + nailGluePrice + siliconePrice;
+            const grandTotal = totalWoodPrice + totalAccessories;
+
+            // Labels
             const serviceLabel = serviceType === 'install' ? 'พร้อมติดตั้ง' : 'เฉพาะไม้';
-            const thicknessLabel = thicknessStr === 'ISF' ? `รุ่น ISF` : (thicknessStr ? `ความหนา ${thicknessStr} มม.` : "");
+            const thicknessLabel = thicknessStr === 'ISF' ? `รุ่น ISF` : `ความหนา ${thicknessStr} มม.`;
             const patternLabel = patternType === 'herringbone' ? "แบบปูก้างปลา" : "แบบปูตรง";
 
-            // บันทึกค่าไว้ใช้สร้างรูปภาพ
+            // Save data for receipt image
             currentCalcData = {
                 productName: `ไม้พื้น SPC ${thicknessLabel}`,
                 pattern: `${patternLabel} (${serviceLabel})`,
+                sqmPerBox: sqmPerBox,
                 area: area,
                 wastePercent: wastePercent,
                 areaWithWaste: areaWithWaste,
                 boxesNeeded: boxesNeeded,
                 pricePerBox: pricePerBox,
-                totalPrice: totalPrice
+                totalWoodPrice: totalWoodPrice,
+                accessories: {
+                    skirt2: { qty: skirt2Qty, unitPrice: skirt2PriceUnit, price: totalSkirt2, label: 'บัว 2 นิ้ว' },
+                    skirt3in: { qty: skirt3inQty, unitPrice: skirt3inPriceUnit, price: totalSkirt3, label: 'บัว 3 นิ้ว' },
+                    skirt4in: { qty: skirt4inQty, unitPrice: skirt4inPriceUnit, price: totalSkirt4, label: 'บัว 4 นิ้ว' },
+                    skirtExtra: { qty: skirtExtraQty, unitPrice: skirtExtraPriceUnit, price: totalSkirtExtra, label: 'บัวนอกเนื้อที่' },
+                    foam: { qty: foamQty, unitPrice: 159, price: foamPrice, label: 'แผ่นโฟมรองพื้น' },
+                    acrylic: { qty: acrylicQty, unitPrice: 80, price: acrylicPrice, label: 'ยาแนวอะคริลิค' },
+                    nailGlue: { qty: nailGlueQty, unitPrice: 120, price: nailGluePrice, label: 'กาวตะปู' },
+                    silicone: { qty: siliconeQty, unitPrice: 139, price: siliconePrice, label: 'ยาแนวซิลิโคน' }
+                },
+                totalAccessories: totalAccessories,
+                grandTotal: grandTotal
             };
 
-            // Generate Output String
+            // Build text output for copying
+            let accListArray = [];
+            if (skirt2Qty > 0) accListArray.push(`- บัว 2 นิ้ว (${skirt2Qty} เส้น × ${formatMoney(skirt2PriceUnit)}.-): ${formatMoney(totalSkirt2)} บาท`);
+            if (skirt3inQty > 0) accListArray.push(`- บัว 3 นิ้ว (${skirt3inQty} เส้น × ${formatMoney(skirt3inPriceUnit)}.-): ${formatMoney(totalSkirt3)} บาท`);
+            if (skirt4inQty > 0) accListArray.push(`- บัว 4 นิ้ว (${skirt4inQty} เส้น × ${formatMoney(skirt4inPriceUnit)}.-): ${formatMoney(totalSkirt4)} บาท`);
+            if (skirtExtraQty > 0) accListArray.push(`- บัวนอกเนื้อที่ (${skirtExtraQty} เส้น × ${formatMoney(skirtExtraPriceUnit)}.-): ${formatMoney(totalSkirtExtra)} บาท`);
+            if (foamQty > 0) accListArray.push(`- แผ่นโฟมรองพื้น (${foamQty} ม้วน × 159.-): ${formatMoney(foamPrice)} บาท`);
+            if (acrylicQty > 0) accListArray.push(`- ยาแนวอะคริลิค (${acrylicQty} หลอด × 80.-): ${formatMoney(acrylicPrice)} บาท`);
+            if (nailGlueQty > 0) accListArray.push(`- กาวตะปู (${nailGlueQty} หลอด × 120.-): ${formatMoney(nailGluePrice)} บาท`);
+            if (siliconeQty > 0) accListArray.push(`- ยาแนวซิลิโคน (${siliconeQty} หลอด × 139.-): ${formatMoney(siliconePrice)} บาท`);
+
+            let textAccSummary = "";
+            if (accListArray.length > 0) {
+                textAccSummary = `\n📦 รายการอุปกรณ์เสริม:\n` + accListArray.join('\n') + `\n- รวมอุปกรณ์เสริม: ${formatMoney(totalAccessories)} บาท\n`;
+            }
+
             const outputString = 
-`✨💚 พื้นที่ ${formatNumber(area)} ตร.ม. 💚✨
+`✨💚 พื้นที่หน้างาน ${formatNumber(area)} ตร.ม. 💚✨
 
 ไม้พื้น SPC ${thicknessLabel} ${patternLabel}
 💰 ราคา${serviceLabel} ${formatNumber(pricePerSqm)}.-/ตร.ม.
 
-📦 1 กล่อง ปูได้ ${formatNumber(sqmPerBox)} ตร.ม.
-ราคา ${formatMoney(pricePerBox)} บาท/กล่อง
+📦 1 กล่อง ปูได้ ${formatNumber(sqmPerBox)} ตร.ม. (ราคา ${formatMoney(pricePerBox)} บ./กล่อง)
+📐 พื้นที่ + เผื่อตัดเข้ามุม ${wastePercent}% = ${formatNumber(areaWithWaste)} ตร.ม.
+👉 ต้องใช้ทั้งหมด ${boxesNeeded} กล่อง (${boxesNeeded} × ${formatMoney(pricePerBox)})
+💰 ยอดเฉพาะไม้พื้น = ${formatMoney(totalWoodPrice)} บาท
+${textAccSummary}
+✨ ยอดรวมสุทธิทั้งหมด ${formatMoney(grandTotal)} บาทค่ะ ✨`;
 
-📐 พื้นที่ ${formatNumber(area)} ตร.ม. + เผื่อไม้สำหรับตัดเข้ามุม ${wastePercent}%
-= ${formatNumber(areaWithWaste)} ตร.ม.
-
-ดังนั้นใช้ทั้งหมด ${boxesNeeded} กล่อง
-💰 ${boxesNeeded} × ${formatMoney(pricePerBox)} = ${formatMoney(totalPrice)} บาท
-
-✨ ยอดรวม${serviceLabel}ทั้งหมด ${formatMoney(totalPrice)} บาทค่ะ ✨`;
-
-            document.getElementById('outputText').value = outputString;
+            outputBox.value = outputString;
         }
 
         function generateImage() {
             if (!currentCalcData) {
-                showToast("กรุณาคำนวณราคาก่อนสร้างรูปภาพ", false);
+                showToast("กรุณากรอกขนาดพื้นที่ก่อนสร้างรูปภาพ", false);
                 return;
             }
 
-            // นำข้อมูลไปใส่ใน Template
             document.getElementById('receipt-product').innerText = currentCalcData.productName;
             document.getElementById('receipt-pattern').innerText = currentCalcData.pattern;
+            document.getElementById('receipt-sqm-box').innerText = `1 กล่องปูได้ ${formatNumber(currentCalcData.sqmPerBox)} ตร.ม.`;
             document.getElementById('receipt-area').innerText = formatNumber(currentCalcData.area) + ' ตร.ม.';
             document.getElementById('receipt-waste').innerText = currentCalcData.wastePercent + '%';
             document.getElementById('receipt-total-area').innerText = formatNumber(currentCalcData.areaWithWaste) + ' ตร.ม.';
             document.getElementById('receipt-boxes').innerText = currentCalcData.boxesNeeded + ' กล่อง';
-            document.getElementById('receipt-price-detail').innerText = `ราคา ${formatMoney(currentCalcData.pricePerBox)} บาท/กล่อง`;
-            document.getElementById('receipt-total-price').innerText = formatMoney(currentCalcData.totalPrice);
-            
-            // ใส่วันที่
+            document.getElementById('receipt-box-sub').innerText = `รวมไม้พื้น (${currentCalcData.boxesNeeded} กล่อง × ${formatMoney(currentCalcData.pricePerBox)}.-)`;
+            document.getElementById('receipt-box-total').innerText = formatMoney(currentCalcData.totalWoodPrice) + ' ฿';
+
+            // Populate accessories in receipt template
+            const accContainer = document.getElementById('receipt-acc-items');
+            accContainer.innerHTML = '';
+            let hasAcc = false;
+
+            for (let key in currentCalcData.accessories) {
+                let item = currentCalcData.accessories[key];
+                if (item.qty > 0) {
+                    hasAcc = true;
+                    let div = document.createElement('div');
+                    div.className = 'flex justify-between text-[11px]';
+                    div.innerHTML = `<span>${item.label} (${item.qty} ชิ้น × ${formatMoney(item.unitPrice)}.-):</span><span class="font-medium">${formatMoney(item.price)} ฿</span>`;
+                    accContainer.appendChild(div);
+                }
+            }
+
+            const accSection = document.getElementById('receipt-acc-section');
+            if (hasAcc) {
+                accSection.classList.remove('hidden');
+                document.getElementById('receipt-acc-total').innerText = formatMoney(currentCalcData.totalAccessories) + ' ฿';
+            } else {
+                accSection.classList.add('hidden');
+            }
+
+            document.getElementById('receipt-total-price').innerText = formatMoney(currentCalcData.grandTotal) + ' ฿';
+
             const now = new Date();
-            const dateOptions = { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
-            document.getElementById('receipt-date').innerText = now.toLocaleDateString('th-TH', dateOptions);
+            document.getElementById('receipt-date').innerText = now.toLocaleDateString('th-TH', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
 
             const template = document.getElementById('receipt-template');
             
-            // แคปหน้าจอ
-            html2canvas(template, {
-                scale: 2, // เพิ่มความละเอียดของรูป
-                backgroundColor: null,
-                logging: false
-            }).then(canvas => {
-                const imgData = canvas.toDataURL('image/png');
-                document.getElementById('previewImage').src = imgData;
-                
-                // เปิด Modal
+            html2canvas(template, { scale: 2, backgroundColor: null, logging: false }).then(canvas => {
+                document.getElementById('previewImage').src = canvas.toDataURL('image/png');
                 const modal = document.getElementById('imageModal');
                 modal.classList.remove('hidden');
                 modal.classList.add('flex');
             }).catch(err => {
-                console.error("Error generating image: ", err);
+                console.error("Error generating image:", err);
                 showToast("เกิดข้อผิดพลาดในการสร้างรูปภาพ", false);
             });
         }
@@ -428,67 +612,54 @@
         function downloadImage() {
             const imgSrc = document.getElementById('previewImage').src;
             if(!imgSrc) return;
-            
             const link = document.createElement('a');
             link.href = imgSrc;
-            // ตั้งชื่อไฟล์พร้อม timestamp
-            link.download = `Leowood_Quotation_${new Date().getTime()}.png`; 
+            link.download = `Leowood_Quotation_${new Date().getTime()}.png`;
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
-            
-            showToast("ดาวน์โหลดรูปภาพสำเร็จ!");
+            showToast("ดาวน์โหลดรูปภาพใบเสนอราคาสำเร็จ!");
             setTimeout(closeImageModal, 1000);
         }
 
         function copyToClipboard() {
             const textarea = document.getElementById('outputText');
-            
             if(!textarea.value || textarea.value.includes("กรุณากรอกขนาดพื้นที่")) {
                 showToast("ยังไม่มีข้อมูลให้คัดลอกครับ", false);
                 return;
             }
-
             textarea.select();
-            textarea.setSelectionRange(0, 99999); // For mobile devices
-
+            textarea.setSelectionRange(0, 99999);
             try {
-                // Try modern clipboard API first
                 navigator.clipboard.writeText(textarea.value).then(() => {
-                    showToast("คัดลอกข้อความแล้ว!");
-                }).catch(err => {
-                    // Fallback for iframe restrictions
+                    showToast("คัดลอกข้อความสรุปราคาแล้ว!");
+                }).catch(() => {
                     document.execCommand('copy');
-                    showToast("คัดลอกข้อความแล้ว!");
+                    showToast("คัดลอกข้อความสรุปราคาแล้ว!");
                 });
             } catch (err) {
                 document.execCommand('copy');
-                showToast("คัดลอกข้อความแล้ว!");
+                showToast("คัดลอกข้อความสรุปราคาแล้ว!");
             }
-            
-            // Deselect text
             window.getSelection().removeAllRanges();
         }
 
         function showToast(message, isSuccess = true) {
             const toast = document.getElementById('toast');
-            
+            const toastText = document.getElementById('toastText');
+            toastText.innerText = message;
             if(!isSuccess) {
-                toast.innerHTML = `⚠️ ${message}`;
-                toast.classList.replace('bg-gray-800', 'bg-red-600');
+                toast.classList.replace('border-gray-800', 'border-red-500');
             } else {
-                toast.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" /></svg> ${message}`;
-                toast.classList.replace('bg-red-600', 'bg-gray-800');
+                toast.classList.replace('border-red-500', 'border-gray-800');
             }
-
-            toast.classList.remove('opacity-0', 'pointer-events-none');
-            
+            toast.classList.remove('opacity-0', 'translate-y-4', 'pointer-events-none');
             setTimeout(() => {
-                toast.classList.add('opacity-0', 'pointer-events-none');
+                toast.classList.add('opacity-0', 'translate-y-4', 'pointer-events-none');
             }, 2500);
         }
 
-        // Initialize empty state
+        // Initialize
         handleProductChange();
         calculate();
     </script>

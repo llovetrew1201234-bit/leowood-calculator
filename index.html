@@ -167,20 +167,6 @@
                                 <span class="text-xs text-gray-500">เส้น</span>
                             </div>
                         </div>
-
-                        <div id="skirtExtraContainer" class="space-y-1 pt-1 border-t border-gray-100">
-                            <div class="flex items-center justify-between gap-2">
-                                <span class="text-xs text-gray-700 font-medium" id="skirtExtraLabel">บัวนอกเนื้อพื้นที่ติดตั้ง</span>
-                                <div class="flex items-center gap-1">
-                                    <input type="number" id="skirtExtraQty" placeholder="0" min="0" class="w-16 px-2 py-1 bg-gray-50 border border-gray-200 rounded-lg text-center text-xs font-semibold focus:ring-1 focus:ring-green-500 outline-none" oninput="calculate()">
-                                    <span class="text-xs text-gray-500">เส้น</span>
-                                </div>
-                            </div>
-                            <div class="flex items-center justify-between gap-2">
-                                <span class="text-[11px] text-gray-400">ราคาต่อเส้น (บาท):</span>
-                                <input type="number" id="skirtExtraPrice" value="50" min="0" class="w-20 px-2 py-0.5 bg-gray-50 border border-gray-200 rounded text-center text-xs font-medium focus:ring-1 focus:ring-green-500 outline-none" oninput="calculate()">
-                            </div>
-                        </div>
                     </div>
 
                     <!-- Foam & Sealants (Hidden when installed) -->
@@ -218,6 +204,30 @@
                                 <span class="text-xs text-gray-500">หลอด</span>
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Self-Leveling Floor Prep Toggle Section -->
+            <div class="bg-gray-50 p-4 rounded-2xl border border-gray-200/80 space-y-3">
+                <div class="flex items-center">
+                    <input type="checkbox" id="isSelfLeveling" class="w-5 h-5 text-green-600 rounded border-gray-300 focus:ring-green-500 cursor-pointer" onchange="toggleSelfLeveling(); calculate();">
+                    <label for="isSelfLeveling" class="ml-2.5 text-sm font-semibold text-gray-800 cursor-pointer">🛠️ เพิ่มค่าบริการปรับปูน Self-Leveling</label>
+                </div>
+                
+                <div id="selfLevelingDiv" class="hidden pt-2 space-y-3 border-t border-gray-200">
+                    <div class="space-y-1">
+                        <label class="block text-xs font-medium text-gray-700">เลือกประเภทความหนาปรับปูน:</label>
+                        <select id="selfLevelingType" class="w-full px-4 py-2.5 bg-white border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none text-xs font-medium text-gray-800" onchange="calculate()">
+                            <option value="350">ปรับปูนแบบบาง (ไม่เกิน 5 mm.) - 350.- / ตร.ม.</option>
+                            <option value="650">ปรับปูนแบบบาง (ระหว่าง 5 - 10 mm.) - 650.- / ตร.ม.</option>
+                        </select>
+                    </div>
+                    <div class="space-y-1">
+                        <label class="block text-xs font-medium text-gray-700">พื้นที่ที่ต้องการปรับปูน (ตร.ม.) [ค่าเริ่มต้นเท่าพื้นที่หน้างาน]:</label>
+                        <input type="number" id="selfLevelingArea" placeholder="เช่น 30" min="0"
+                            class="w-full px-4 py-2.5 bg-white border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none text-xs font-medium text-gray-800"
+                            oninput="calculate()">
                     </div>
                 </div>
             </div>
@@ -294,10 +304,10 @@
                 </div>
 
                 <div id="receipt-acc-section" class="space-y-1.5 text-xs text-gray-600 border-t border-dashed border-gray-200 pt-3 hidden">
-                    <div class="font-semibold text-gray-700 text-[11px] uppercase tracking-wider mb-1">รายการอุปกรณ์เสริม</div>
+                    <div class="font-semibold text-gray-700 text-[11px] uppercase tracking-wider mb-1">รายการอุปกรณ์เสริมและบริการเพิ่มเติม</div>
                     <div id="receipt-acc-items" class="space-y-1"></div>
                     <div class="flex justify-between text-[11px] text-gray-500 pt-1">
-                        <span>รวมอุปกรณ์เสริม</span>
+                        <span>รวมอุปกรณ์เสริมและบริการ</span>
                         <span id="receipt-acc-total">0.00 ฿</span>
                     </div>
                 </div>
@@ -404,6 +414,23 @@
             }
         }
 
+        function toggleSelfLeveling() {
+            const isSelf = document.getElementById('isSelfLeveling').checked;
+            const selfDiv = document.getElementById('selfLevelingDiv');
+            const areaInput = document.getElementById('area').value;
+            const selfAreaInput = document.getElementById('selfLevelingArea');
+            
+            if (isSelf) {
+                selfDiv.classList.remove('hidden');
+                if (areaInput && !selfAreaInput.value) {
+                    selfAreaInput.value = areaInput;
+                }
+            } else {
+                selfDiv.classList.add('hidden');
+                selfAreaInput.value = '';
+            }
+        }
+
         let currentCalcData = null;
 
         function calculate() {
@@ -453,13 +480,9 @@
             skirt3inQty = parseInt(document.getElementById('skirt3in').value) || 0;
             skirt4inQty = parseInt(document.getElementById('skirt4in').value) || 0;
 
-            const skirtExtraQty = parseInt(document.getElementById('skirtExtraQty').value) || 0;
-            const skirtExtraPriceUnit = parseFloat(document.getElementById('skirtExtraPrice').value) || 0;
-
             const totalSkirt2 = skirt2Qty * skirt2PriceUnit;
             const totalSkirt3 = skirt3inQty * skirt3inPriceUnit;
             const totalSkirt4 = skirt4inQty * skirt4inPriceUnit;
-            const totalSkirtExtra = skirtExtraQty * skirtExtraPriceUnit;
 
             let foamQty = 0, foamPrice = 0;
             let acrylicQty = 0, acrylicPrice = 0;
@@ -480,7 +503,17 @@
                 siliconePrice = siliconeQty * 139;
             }
 
-            const totalAccessories = totalSkirt2 + totalSkirt3 + totalSkirt4 + totalSkirtExtra + foamPrice + acrylicPrice + nailGluePrice + siliconePrice;
+            // Self-Leveling calculation
+            let selfPrice = 0, selfArea = 0, selfUnitRate = 0, selfTypeName = "";
+            const isSelf = document.getElementById('isSelfLeveling').checked;
+            if (isSelf) {
+                selfArea = parseFloat(document.getElementById('selfLevelingArea').value) || area;
+                selfUnitRate = parseFloat(document.getElementById('selfLevelingType').value) || 350;
+                selfPrice = selfArea * selfUnitRate;
+                selfTypeName = selfUnitRate === 350 ? "ปรับปูนแบบบาง (ไม่เกิน 5 mm.)" : "ปรับปูนแบบบาง (ระหว่าง 5 - 10 mm.)";
+            }
+
+            const totalAccessories = totalSkirt2 + totalSkirt3 + totalSkirt4 + foamPrice + acrylicPrice + nailGluePrice + siliconePrice + selfPrice;
             const grandTotal = totalWoodPrice + totalAccessories;
 
             // Labels
@@ -500,14 +533,14 @@
                 pricePerBox: pricePerBox,
                 totalWoodPrice: totalWoodPrice,
                 accessories: {
-                    skirt2: { qty: skirt2Qty, unitPrice: skirt2PriceUnit, price: totalSkirt2, label: 'บัว 2 นิ้ว' },
-                    skirt3in: { qty: skirt3inQty, unitPrice: skirt3inPriceUnit, price: totalSkirt3, label: 'บัว 3 นิ้ว' },
-                    skirt4in: { qty: skirt4inQty, unitPrice: skirt4inPriceUnit, price: totalSkirt4, label: 'บัว 4 นิ้ว' },
-                    skirtExtra: { qty: skirtExtraQty, unitPrice: skirtExtraPriceUnit, price: totalSkirtExtra, label: 'บัวนอกเนื้อที่' },
-                    foam: { qty: foamQty, unitPrice: 159, price: foamPrice, label: 'แผ่นโฟมรองพื้น' },
-                    acrylic: { qty: acrylicQty, unitPrice: 80, price: acrylicPrice, label: 'ยาแนวอะคริลิค' },
-                    nailGlue: { qty: nailGlueQty, unitPrice: 120, price: nailGluePrice, label: 'กาวตะปู' },
-                    silicone: { qty: siliconeQty, unitPrice: 139, price: siliconePrice, label: 'ยาแนวซิลิโคน' }
+                    skirt2: { qty: skirt2Qty, unitPrice: skirt2PriceUnit, price: totalSkirt2, label: 'บัว 2 นิ้ว', unit: 'เส้น' },
+                    skirt3in: { qty: skirt3inQty, unitPrice: skirt3inPriceUnit, price: totalSkirt3, label: 'บัว 3 นิ้ว', unit: 'เส้น' },
+                    skirt4in: { qty: skirt4inQty, unitPrice: skirt4inPriceUnit, price: totalSkirt4, label: 'บัว 4 นิ้ว', unit: 'เส้น' },
+                    foam: { qty: foamQty, unitPrice: 159, price: foamPrice, label: 'แผ่นโฟมรองพื้น', unit: 'ม้วน' },
+                    acrylic: { qty: acrylicQty, unitPrice: 80, price: acrylicPrice, label: 'ยาแนวอะคริลิค', unit: 'หลอด' },
+                    nailGlue: { qty: nailGlueQty, unitPrice: 120, price: nailGluePrice, label: 'กาวตะปู', unit: 'หลอด' },
+                    silicone: { qty: siliconeQty, unitPrice: 139, price: siliconePrice, label: 'ยาแนวซิลิโคน', unit: 'หลอด' },
+                    selfLeveling: { qty: selfArea, unitPrice: selfUnitRate, price: selfPrice, label: selfTypeName, unit: 'ตร.ม.' }
                 },
                 totalAccessories: totalAccessories,
                 grandTotal: grandTotal
@@ -518,15 +551,15 @@
             if (skirt2Qty > 0) accListArray.push(`- บัว 2 นิ้ว (${skirt2Qty} เส้น × ${formatMoney(skirt2PriceUnit)}.-): ${formatMoney(totalSkirt2)} บาท`);
             if (skirt3inQty > 0) accListArray.push(`- บัว 3 นิ้ว (${skirt3inQty} เส้น × ${formatMoney(skirt3inPriceUnit)}.-): ${formatMoney(totalSkirt3)} บาท`);
             if (skirt4inQty > 0) accListArray.push(`- บัว 4 นิ้ว (${skirt4inQty} เส้น × ${formatMoney(skirt4inPriceUnit)}.-): ${formatMoney(totalSkirt4)} บาท`);
-            if (skirtExtraQty > 0) accListArray.push(`- บัวนอกเนื้อที่ (${skirtExtraQty} เส้น × ${formatMoney(skirtExtraPriceUnit)}.-): ${formatMoney(totalSkirtExtra)} บาท`);
             if (foamQty > 0) accListArray.push(`- แผ่นโฟมรองพื้น (${foamQty} ม้วน × 159.-): ${formatMoney(foamPrice)} บาท`);
             if (acrylicQty > 0) accListArray.push(`- ยาแนวอะคริลิค (${acrylicQty} หลอด × 80.-): ${formatMoney(acrylicPrice)} บาท`);
             if (nailGlueQty > 0) accListArray.push(`- กาวตะปู (${nailGlueQty} หลอด × 120.-): ${formatMoney(nailGluePrice)} บาท`);
             if (siliconeQty > 0) accListArray.push(`- ยาแนวซิลิโคน (${siliconeQty} หลอด × 139.-): ${formatMoney(siliconePrice)} บาท`);
+            if (selfPrice > 0) accListArray.push(`- ${selfTypeName} (${selfArea} ตร.ม. × ${selfUnitRate}.-): ${formatMoney(selfPrice)} บาท`);
 
             let textAccSummary = "";
             if (accListArray.length > 0) {
-                textAccSummary = `\n📦 รายการอุปกรณ์เสริม:\n` + accListArray.join('\n') + `\n- รวมอุปกรณ์เสริม: ${formatMoney(totalAccessories)} บาท\n`;
+                textAccSummary = `\n📦 รายการอุปกรณ์เสริมและบริการ:\n` + accListArray.join('\n') + `\n- รวมอุปกรณ์เสริมและบริการ: ${formatMoney(totalAccessories)} บาท\n`;
             }
 
             const outputString = 
@@ -572,7 +605,7 @@ ${textAccSummary}
                     hasAcc = true;
                     let div = document.createElement('div');
                     div.className = 'flex justify-between text-[11px]';
-                    div.innerHTML = `<span>${item.label} (${item.qty} ชิ้น × ${formatMoney(item.unitPrice)}.-):</span><span class="font-medium">${formatMoney(item.price)} ฿</span>`;
+                    div.innerHTML = `<span>${item.label} (${item.qty} ${item.unit} × ${formatMoney(item.unitPrice)}.-):</span><span class="font-medium">${formatMoney(item.price)} ฿</span>`;
                     accContainer.appendChild(div);
                 }
             }

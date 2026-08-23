@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leowood SPC Calculator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        body {
+            font-family: 'Prompt', sans-serif;
+            background-color: #f0fdf4; /* Light green background */
+        }
+        /* Custom Scrollbar for the output box */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #22c55e; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #16a34a; 
+        }
+    </style>
+</head>
+<body class="min-h-screen p-4 md:p-8 flex justify-center items-start">
+
+    <div class="max-w-md w-full bg-white rounded-2xl shadow-xl overflow-hidden border border-green-100">
+        
+        <!-- Header -->
+        <div class="bg-green-600 p-6 text-white text-center">
+            <h1 class="text-2xl font-semibold mb-1">✨ Leowood SPC ✨</h1>
+            <p class="text-green-100 text-sm">เครื่องมือช่วยคำนวณราคาสำหรับแอดมิน</p>
+        </div>
+
+        <!-- Form Content -->
+        <div class="p-6 space-y-4">
+            
+            <div class="grid grid-cols-2 gap-4">
+                <!-- Area Input -->
+                <div>
+                    <label for="area" class="block text-sm font-medium text-gray-700 mb-1">ขนาดพื้นที่ (ตร.ม.)</label>
+                    <input type="number" id="area" placeholder="เช่น 60" 
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition"
+                        oninput="calculate()">
+                </div>
+                
+                <!-- Sqm Per Box Input -->
+                <div>
+                    <label for="sqmPerBox" class="block text-sm font-medium text-gray-700 mb-1">ตร.ม./กล่อง (เช่น 2.67)</label>
+                    <input type="number" id="sqmPerBox" value="2.67" step="0.01"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition"
+                        oninput="calculate()">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Product Option -->
+                <div>
+                    <label for="productSelect" class="block text-sm font-medium text-gray-700 mb-1">ประเภทและราคา</label>
+                    <select id="productSelect" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none bg-white text-sm" onchange="handleProductChange(); calculate();">
+                        <optgroup label="ความหนา 5 มม.">
+                            <option value="459_5_wood">5 มม. เฉพาะไม้ (459.-)</option>
+                            <option value="659_5_install">5 มม. พร้อมติดตั้ง (659.-)</option>
+                        </optgroup>
+                        <optgroup label="ความหนา 6 มม.">
+                            <option value="695_6_wood">6 มม. เฉพาะไม้ (695.-)</option>
+                            <option value="895_6_install">6 มม. พร้อมติดตั้ง (895.-)</option>
+                        </optgroup>
+                        <optgroup label="ความหนา 8 มม.">
+                            <option value="890_8_wood">8 มม. เฉพาะไม้ (890.-)</option>
+                            <option value="1110_8_install">8 มม. พร้อมติดตั้ง (1110.-)</option>
+                        </optgroup>
+                        <optgroup label="ไม้พื้น ISF">
+                            <option value="760_ISF_wood">ISF เฉพาะไม้ (760.-)</option>
+                            <option value="960_ISF_install">ISF พร้อมติดตั้ง (960.-)</option>
+                        </optgroup>
+                    </select>
+                </div>
+                
+                <!-- Waste Margin Option -->
+                <div>
+                    <label for="waste" class="block text-sm font-medium text-gray-700 mb-1">เผื่อตัดเข้ามุม (%)</label>
+                    <select id="waste" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none bg-white text-sm" onchange="calculate()">
+                        <option value="5">5% (มาตรฐาน/ปูตรง)</option>
+                        <option value="7">7% (ปูตรงห้องซับซ้อน)</option>
+                        <option value="18">18% (ลายก้างปลา)</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Promo Price Toggle -->
+            <div class="bg-green-50 p-3 rounded-lg border border-green-100">
+                <div class="flex items-center">
+                    <input type="checkbox" id="isPromo" class="w-4 h-4 text-green-600 rounded border-gray-300 focus:ring-green-500" onchange="togglePromo(); calculate();">
+                    <label for="isPromo" class="ml-2 text-sm font-medium text-gray-700">ระบุราคาจัดโปรโมชั่น / กำหนดราคาเอง</label>
+                </div>
+                <div id="promoPriceDiv" class="hidden mt-3">
+                    <label for="promoPrice" class="block text-xs font-medium text-gray-700 mb-1">ราคาโปรโมชั่น ต่อ ตร.ม. (บาท)</label>
+                    <input type="number" id="promoPrice" placeholder="เช่น 359" 
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition"
+                        oninput="calculate()">
+                </div>
+            </div>
+
+            <hr class="my-4 border-gray-200">
+
+            <!-- Result Display -->
+            <div class="relative">
+                <div class="absolute top-2 right-2 flex gap-2">
+                    <button onclick="generateImage()" class="bg-blue-100 hover:bg-blue-200 text-blue-700 px-3 py-1.5 rounded-md text-xs font-medium transition shadow-sm flex items-center gap-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                        สร้างรูปภาพ
+                    </button>
+                    <button onclick="copyToClipboard()" class="bg-green-100 hover:bg-green-200 text-green-700 px-3 py-1.5 rounded-md text-xs font-medium transition shadow-sm flex items-center gap-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                        </svg>
+                        คัดลอก
+                    </button>
+                </div>
+                <!-- Output Textarea (Readonly) -->
+                <textarea id="outputText" readonly
+                    class="w-full h-80 p-4 pt-10 bg-gray-50 border border-gray-200 rounded-xl text-gray-800 text-sm resize-none focus:outline-none focus:ring-1 focus:ring-green-500 font-sans leading-relaxed"></textarea>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Toast Notification for Copy -->
+    <div id="toast" class="fixed bottom-10 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white px-6 py-3 rounded-full shadow-lg transition-opacity duration-300 opacity-0 pointer-events-none flex items-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+        </svg>
+        คัดลอกข้อความแล้ว!
+    </div>
+
+    <div style="position: absolute; left: -9999px; top: 0;">
+        <div id="receipt-template" class="bg-white w-[400px] p-0 rounded-xl shadow-2xl overflow-hidden border border-gray-100 font-sans">
+            <!-- Header -->
+            <div class="bg-green-600 p-5 text-center relative">
+                <div class="absolute top-0 left-0 w-full h-full opacity-10" style="background-image: radial-gradient(circle, white 2px, transparent 2px); background-size: 15px 15px;"></div>
+                <h2 class="text-white text-2xl font-bold tracking-wider relative z-10">LEOWOOD</h2>
+                <p class="text-green-100 text-sm mt-1 relative z-10">ใบประเมินราคาเบื้องต้น (ไม้พื้น SPC)</p>
+            </div>
+            
+            <!-- Details -->
+            <div class="p-6 space-y-4">
+                <div class="text-right text-xs text-gray-500 mb-2" id="receipt-date"></div>
+                
+                <div class="bg-gray-50 p-3 rounded-lg border border-gray-100">
+                    <div class="font-semibold text-gray-800 text-sm" id="receipt-product">ไม้พื้น SPC</div>
+                    <div class="text-xs text-gray-500 mt-1" id="receipt-pattern">แบบปูตรง (พร้อมติดตั้ง)</div>
+                </div>
+
+                <div class="space-y-2 text-sm">
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">พื้นที่หน้างาน:</span>
+                        <span class="font-medium text-gray-800" id="receipt-area">0 ตร.ม.</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">เผื่อตัดเข้ามุม (Waste):</span>
+                        <span class="font-medium text-gray-800" id="receipt-waste">5%</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">พื้นที่ใช้คำนวณรวม:</span>
+                        <span class="font-medium text-green-600" id="receipt-total-area">0 ตร.ม.</span>
+                    </div>
+                </div>
+                
+                <hr class="border-dashed border-gray-300">
+
+                <div class="space-y-2 text-sm">
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">จำนวนที่ต้องใช้:</span>
+                        <span class="font-bold text-gray-800 text-base" id="receipt-boxes">0 กล่อง</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-500 text-xs" id="receipt-price-detail">ราคา 0 บาท/กล่อง</span>
+                    </div>
+                </div>
+
+                <!-- Total -->
+                <div class="bg-green-50 p-4 rounded-xl border border-green-200 mt-4">
+                    <div class="text-center text-green-800 text-xs font-medium mb-1">ยอดรวมประเมิน (บาท)</div>
+                    <div class="text-center text-3xl font-bold text-green-600" id="receipt-total-price">0.00</div>
+                </div>
+                
+                <div class="text-center text-[10px] text-gray-400 mt-4">
+                    *ราคานี้เป็นการประเมินเบื้องต้น อาจมีการเปลี่ยนแปลงตามหน้างานจริง<br>
+                    ขอบคุณที่ไว้วางใจ Leowood ค่ะ
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="imageModal" class="fixed inset-0 bg-black/60 z-50 hidden flex-col items-center justify-center p-4 backdrop-blur-sm transition-opacity">
+        <div class="bg-white rounded-2xl max-w-sm w-full overflow-hidden shadow-2xl transform transition-all">
+            <div class="p-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+                <h3 class="font-medium text-gray-800">รูปภาพใบประเมินราคา</h3>
+                <button onclick="closeImageModal()" class="text-gray-400 hover:text-gray-600 bg-white rounded-full p-1 shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                    </svg>
+                </button>
+            </div>
+            <div class="p-6 bg-gray-100 flex justify-center items-center h-80 overflow-y-auto">
+                <!-- Image Preview -->
+                <img id="previewImage" src="" alt="Quotation Preview" class="max-w-full h-auto drop-shadow-lg rounded">
+            </div>
+            <div class="p-4 bg-white grid grid-cols-2 gap-3">
+                <button onclick="closeImageModal()" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition">
+                    ปิด
+                </button>
+                <button onclick="downloadImage()" class="px-4 py-2 text-sm font-medium text-white bg-green-600 border border-transparent rounded-lg hover:bg-green-700 transition shadow-md flex items-center justify-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                    </svg>
+                    บันทึกรูปภาพ
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Number formatting helper
+        const formatMoney = (num) => {
+            return num.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        };
+
+        const formatNumber = (num) => {
+            return parseFloat(num.toFixed(2)).toString(); // Removes trailing zeros for standard numbers
+        };
+
+        function handleProductChange() {
+            const productSelect = document.getElementById('productSelect').value;
+            const sqmInput = document.getElementById('sqmPerBox');
+            
+            const parts = productSelect.split('_');
+            const thicknessStr = parts[1];
+            
+            // Auto-fill Sqm per box based on selected thickness
+            if (thicknessStr === '5') {
+                sqmInput.value = 2.67;
+            } else if (thicknessStr === '6') {
+                sqmInput.value = 2.76;
+            } else if (thicknessStr === '8') {
+                sqmInput.value = 2.07;
+            } else if (thicknessStr === 'ISF') {
+                sqmInput.value = 2.20;
+            }
+        }
+
+        function togglePromo() {
+            const isPromo = document.getElementById('isPromo').checked;
+            const promoPriceDiv = document.getElementById('promoPriceDiv');
+            
+            if (isPromo) {
+                promoPriceDiv.classList.remove('hidden');
+                document.getElementById('promoPrice').focus();
+            } else {
+                promoPriceDiv.classList.add('hidden');
+                document.getElementById('promoPrice').value = ''; // clear promo input when disabled
+            }
+        }
+
+        // ตัวแปรเก็บค่าการคำนวณล่าสุดเพื่อนำไปสร้างรูปภาพ
+        let currentCalcData = null;
+
+        function calculate() {
+            // Get values
+            const areaInput = document.getElementById('area').value;
+            if (!areaInput || areaInput <= 0) {
+                document.getElementById('outputText').value = "กรุณากรอกขนาดพื้นที่ (ตร.ม.) เพื่อเริ่มต้นคำนวณครับ 😊";
+                return;
+            }
+
+            const area = parseFloat(areaInput);
+            const productVal = document.getElementById('productSelect').value;
+            const wastePercent = parseFloat(document.getElementById('waste').value);
+            const sqmPerBox = parseFloat(document.getElementById('sqmPerBox').value) || 2.67;
+
+            let pricePerSqm, thicknessStr, serviceType;
+
+            const parts = productVal.split('_');
+            pricePerSqm = parseFloat(parts[0]);
+            thicknessStr = parts[1];
+            serviceType = parts[2];
+            
+            // Check if promo price is active
+            const isPromo = document.getElementById('isPromo').checked;
+            if (isPromo) {
+                const promoVal = parseFloat(document.getElementById('promoPrice').value);
+                if (promoVal > 0) {
+                    pricePerSqm = promoVal;
+                }
+            }
+            
+            // คำนวณพื้นที่และจำนวนกล่อง
+            const areaWithWaste = area * (1 + (wastePercent / 100));
+            const pricePerBox = pricePerSqm * sqmPerBox;
+            const exactBoxes = areaWithWaste / sqmPerBox;
+            const decimalPart = exactBoxes - Math.floor(exactBoxes);
+            
+            const boxesNeeded = Math.floor(exactBoxes) + (decimalPart >= 0.3 ? 1 : 0);
+            
+            const totalPrice = boxesNeeded * pricePerBox;
+
+            // Generate Strings
+            const serviceLabel = serviceType === 'install' ? 'พร้อมติดตั้ง' : 'เฉพาะไม้';
+            const thicknessLabel = thicknessStr === 'ISF' ? `รุ่น ISF` : (thicknessStr ? `ความหนา ${thicknessStr} มม.` : "");
+            const patternLabel = wastePercent === 18 ? "แบบปูก้างปลา" : "แบบปูตรง";
+
+            // บันทึกค่าไว้ใช้สร้างรูปภาพ
+            currentCalcData = {
+                productName: `ไม้พื้น SPC ${thicknessLabel}`,
+                pattern: `${patternLabel} (${serviceLabel})`,
+                area: area,
+                wastePercent: wastePercent,
+                areaWithWaste: areaWithWaste,
+                boxesNeeded: boxesNeeded,
+                pricePerBox: pricePerBox,
+                totalPrice: totalPrice
+            };
+
+            // Generate Output String
+            const outputString = 
+`✨💚 พื้นที่ ${formatNumber(area)} ตร.ม. 💚✨
+
+ไม้พื้น SPC ${thicknessLabel} ${patternLabel}
+💰 ราคา${serviceLabel} ${formatNumber(pricePerSqm)}.-/ตร.ม.
+
+📦 1 กล่อง ปูได้ ${formatNumber(sqmPerBox)} ตร.ม.
+ราคา ${formatMoney(pricePerBox)} บาท/กล่อง
+
+📐 พื้นที่ ${formatNumber(area)} ตร.ม. + เผื่อไม้สำหรับตัดเข้ามุม ${wastePercent}%
+= ${formatNumber(areaWithWaste)} ตร.ม.
+
+ดังนั้นใช้ทั้งหมด ${boxesNeeded} กล่อง
+💰 ${boxesNeeded} × ${formatMoney(pricePerBox)} = ${formatMoney(totalPrice)} บาท
+
+✨ ยอดรวม${serviceLabel}ทั้งหมด ${formatMoney(totalPrice)} บาทค่ะ ✨`;
+
+            document.getElementById('outputText').value = outputString;
+        }
+
+        function generateImage() {
+            if (!currentCalcData) {
+                showToast("กรุณาคำนวณราคาก่อนสร้างรูปภาพ", false);
+                return;
+            }
+
+            // นำข้อมูลไปใส่ใน Template
+            document.getElementById('receipt-product').innerText = currentCalcData.productName;
+            document.getElementById('receipt-pattern').innerText = currentCalcData.pattern;
+            document.getElementById('receipt-area').innerText = formatNumber(currentCalcData.area) + ' ตร.ม.';
+            document.getElementById('receipt-waste').innerText = currentCalcData.wastePercent + '%';
+            document.getElementById('receipt-total-area').innerText = formatNumber(currentCalcData.areaWithWaste) + ' ตร.ม.';
+            document.getElementById('receipt-boxes').innerText = currentCalcData.boxesNeeded + ' กล่อง';
+            document.getElementById('receipt-price-detail').innerText = `ราคา ${formatMoney(currentCalcData.pricePerBox)} บาท/กล่อง`;
+            document.getElementById('receipt-total-price').innerText = formatMoney(currentCalcData.totalPrice);
+            
+            // ใส่วันที่
+            const now = new Date();
+            const dateOptions = { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+            document.getElementById('receipt-date').innerText = now.toLocaleDateString('th-TH', dateOptions);
+
+            const template = document.getElementById('receipt-template');
+            
+            // แคปหน้าจอ
+            html2canvas(template, {
+                scale: 2, // เพิ่มความละเอียดของรูป
+                backgroundColor: null,
+                logging: false
+            }).then(canvas => {
+                const imgData = canvas.toDataURL('image/png');
+                document.getElementById('previewImage').src = imgData;
+                
+                // เปิด Modal
+                const modal = document.getElementById('imageModal');
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+            }).catch(err => {
+                console.error("Error generating image: ", err);
+                showToast("เกิดข้อผิดพลาดในการสร้างรูปภาพ", false);
+            });
+        }
+
+        function closeImageModal() {
+            const modal = document.getElementById('imageModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function downloadImage() {
+            const imgSrc = document.getElementById('previewImage').src;
+            if(!imgSrc) return;
+            
+            const link = document.createElement('a');
+            link.href = imgSrc;
+            // ตั้งชื่อไฟล์พร้อม timestamp
+            link.download = `Leowood_Quotation_${new Date().getTime()}.png`; 
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            showToast("ดาวน์โหลดรูปภาพสำเร็จ!");
+            setTimeout(closeImageModal, 1000);
+        }
+
+        function copyToClipboard() {
+            const textarea = document.getElementById('outputText');
+            
+            if(!textarea.value || textarea.value.includes("กรุณากรอกขนาดพื้นที่")) {
+                showToast("ยังไม่มีข้อมูลให้คัดลอกครับ", false);
+                return;
+            }
+
+            textarea.select();
+            textarea.setSelectionRange(0, 99999); // For mobile devices
+
+            try {
+                // Try modern clipboard API first
+                navigator.clipboard.writeText(textarea.value).then(() => {
+                    showToast("คัดลอกข้อความแล้ว!");
+                }).catch(err => {
+                    // Fallback for iframe restrictions
+                    document.execCommand('copy');
+                    showToast("คัดลอกข้อความแล้ว!");
+                });
+            } catch (err) {
+                document.execCommand('copy');
+                showToast("คัดลอกข้อความแล้ว!");
+            }
+            
+            // Deselect text
+            window.getSelection().removeAllRanges();
+        }
+
+        function showToast(message, isSuccess = true) {
+            const toast = document.getElementById('toast');
+            
+            if(!isSuccess) {
+                toast.innerHTML = `⚠️ ${message}`;
+                toast.classList.replace('bg-gray-800', 'bg-red-600');
+            } else {
+                toast.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" /></svg> ${message}`;
+                toast.classList.replace('bg-red-600', 'bg-gray-800');
+            }
+
+            toast.classList.remove('opacity-0', 'pointer-events-none');
+            
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'pointer-events-none');
+            }, 2500);
+        }
+
+        // Initialize empty state
+        handleProductChange();
+        calculate();
+    </script>
+</body>
+</html>

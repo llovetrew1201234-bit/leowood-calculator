@@ -991,7 +991,7 @@
             { 
                 id: Date.now(), category: 'complete', type: 'single', pattern: 'plain', size: '80x200', color: 'Pure White', qty: 1, installPrice: 0, 
                 addFrame: false, frameType: 'frameSynthStd', frameSize: '80x200', frameColor: 'White', frameQty: 1, frameInstallPrice: 0,
-                addOns: [] 
+                addDrilling: false, addOns: [] 
             }
         ];
 
@@ -999,7 +999,7 @@
             doorItems.push({ 
                 id: Date.now(), category: 'complete', type: 'single', pattern: 'plain', size: '80x200', color: 'Pure White', qty: 1, installPrice: 0, 
                 addFrame: false, frameType: 'frameSynthStd', frameSize: '80x200', frameColor: 'White', frameQty: 1, frameInstallPrice: 0,
-                addOns: [] 
+                addDrilling: false, addOns: [] 
             });
             renderDoorsUI();
             calculateDoor();
@@ -1045,7 +1045,7 @@
             if(door) {
                 if(field === 'qty' || field === 'frameQty') door[field] = parseInt(value) || 0;
                 else if (field === 'installPrice' || field === 'frameInstallPrice') door[field] = value === '' ? 0 : parseFloat(value);
-                else if (field === 'addFrame') door[field] = value;
+                else if (field === 'addFrame' || field === 'addDrilling') door[field] = value;
                 else door[field] = value;
                 
                 if (field === 'category') {
@@ -1073,6 +1073,7 @@
                         door.color = patternObj.sizes[door.size].colors[0] || '';
                     }
                     door.addOns = [];
+                    door.addDrilling = false;
                 } else if (field === 'type' || field === 'pattern') {
                     if (door.category === 'frames') {
                         const typeObj = doorConfig.categories.frames.types[door.type];
@@ -1286,7 +1287,33 @@
                     `;
                 }
 
-                // Add-on Hardware / Locks / Digital Door Lock section
+                let drillingAddonHTML = '';
+                if (door.category === 'slab') {
+                    drillingAddonHTML = `
+                        <div class="mt-4 pt-4 border-t border-dashed border-gray-200 dark:border-gray-700 bg-sky-50/50 dark:bg-gray-900/40 p-4 rounded-2xl space-y-2">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <input type="checkbox" id="addDrilling_${door.id}" ${door.addDrilling ? 'checked' : ''} onchange="updateDoorField(${door.id}, 'addDrilling', this.checked)" class="w-4 h-4 text-green-600 rounded border-gray-300 focus:ring-green-500 cursor-pointer">
+                                    <label for="addDrilling_${door.id}" class="text-xs font-bold text-sky-900 dark:text-sky-300 cursor-pointer">🕳️ เพิ่มเจาะลูกบิดประตูเหล็กเฉพาะบาน (500.- / ประตู)</label>
+                                </div>
+                                <span class="text-xs font-extrabold text-sky-700 dark:text-sky-400">${door.addDrilling ? formatMoney(500 * door.qty) + '.-' : ''}</span>
+                            </div>
+                        </div>
+                    `;
+                } else if (door.category === 'udoor') {
+                    drillingAddonHTML = `
+                        <div class="mt-4 pt-4 border-t border-dashed border-gray-200 dark:border-gray-700 bg-sky-50/50 dark:bg-gray-900/40 p-4 rounded-2xl space-y-2">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <input type="checkbox" id="addDrilling_${door.id}" ${door.addDrilling ? 'checked' : ''} onchange="updateDoorField(${door.id}, 'addDrilling', this.checked)" class="w-4 h-4 text-green-600 rounded border-gray-300 focus:ring-green-500 cursor-pointer">
+                                    <label for="addDrilling_${door.id}" class="text-xs font-bold text-sky-900 dark:text-sky-300 cursor-pointer">🕳️ เพิ่มเจาะลูกบิดประตู Udoor S1, S2, S3 (150.- / บาน)</label>
+                                </div>
+                                <span class="text-xs font-extrabold text-sky-700 dark:text-sky-400">${door.addDrilling ? formatMoney(150 * door.qty) + '.-' : ''}</span>
+                            </div>
+                        </div>
+                    `;
+                }
+
                 let addOnsHTML = '';
                 if (isSlabOrUdoor || isComplete) {
                     let filteredCatalog = hardwareCatalog;
@@ -1413,19 +1440,18 @@
                     </div>
 
                     ${frameAddonHTML}
+                    ${drillingAddonHTML}
                     ${addOnsHTML}
                 `;
                 container.appendChild(div);
             });
         }
 
-        let currentCalcData = null;
-
         function calculateDoor() {
             const outputBox = document.getElementById('outputText');
 
             if (doorItems.length === 0 || doorItems.every(d => d.qty <= 0)) {
-                outputBox.value = "💡 กรุณาระบุจำนวนรายการสินค้าเพื่อเริ่มต้นคำนวณราคาครับ";
+                if (outputBox) outputBox.value = "💡 กรุณาระบุจำนวนรายการสินค้าเพื่อเริ่มต้นคำนวณราคาครับ";
                 currentCalcData = null;
                 return;
             }
@@ -1533,15 +1559,27 @@
                         }
 
                         receiptItems[`addon_frame_${door.id}`] = {
-                            label: `[Add-on] วงกบ ${fTypeObj.label} ${door.frameSize} (${door.frameColor})`,
+                            label: `วงกบ ${fTypeObj.label} ${door.frameSize} (${door.frameColor})`,
                             qty: frameQty, unit: 'ชิ้น', unitPrice: frameUnitPrice, price: frameTotal
                         };
                         if(door.frameInstallPrice > 0) {
                             receiptItems[`addon_frame_install_${door.id}`] = {
-                                label: `ค่าจัดส่งวงกบ (Add-on)`,
+                                label: `ค่าจัดส่งวงกบ`,
                                 qty: 1, unit: 'รายการ', unitPrice: door.frameInstallPrice, price: frameInstallTotal
                             };
                         }
+                    }
+
+                    // Add-on Drilling handling
+                    if ((door.category === 'slab' || door.category === 'udoor') && door.addDrilling) {
+                        const drillUnitPrice = door.category === 'slab' ? 500 : 150;
+                        const drillTotal = door.qty * drillUnitPrice;
+                        totalDoorPrice += drillTotal;
+                        detailsStr += `\n   🕳️ [Add-on เจาะลูกบิด] ${drillUnitPrice}.- × ${door.qty} = ${formatMoney(drillTotal)} บาท`;
+                        receiptItems[`addon_drill_${door.id}`] = {
+                            label: `ค่าเจาะลูกบิดประตู`,
+                            qty: door.qty, unit: 'บาน', unitPrice: drillUnitPrice, price: drillTotal
+                        };
                     }
 
                     // Add-on Hardware / Locks handling
@@ -1555,7 +1593,7 @@
                                 detailsStr += `\n   ➕ [Add-on ฮาร์ดแวร์] ${catalogItem.label} x${ao.qty} = ${formatMoney(aoTotal)} บาท`;
 
                                 receiptItems[`addon_hw_${door.id}_${aoIdx}`] = {
-                                    label: `[Add-on] ${catalogItem.label}`,
+                                    label: `${catalogItem.label}`,
                                     qty: ao.qty, unit: 'ชิ้น', unitPrice: catalogItem.price, price: aoTotal
                                 };
                             }
@@ -1567,91 +1605,86 @@
                 }
             });
 
-            let subtotalBeforeDiscount = totalDoorPrice + totalInstallPrice;
-            let discountAmount = 0;
-            let discountText = "";
-
-            if (document.getElementById('isDoorPromo').checked) {
+            // Apply Door Promo/Discount if enabled
+            let doorDiscountTotal = 0;
+            const isDoorPromo = document.getElementById('isDoorPromo').checked;
+            if (isDoorPromo) {
                 const promoType = document.getElementById('doorPromoType').value;
                 const promoVal = parseFloat(document.getElementById('doorPromoValue').value) || 0;
-                if (promoVal > 0) {
-                    if (promoType === 'percent') {
-                        discountAmount = subtotalBeforeDiscount * (promoVal / 100);
-                        discountText = `🏷️ ส่วนลดโปรโมชั่น (${promoVal}%) = -${formatMoney(discountAmount)} บาท\n`;
-                    } else {
-                        discountAmount = Math.min(promoVal, subtotalBeforeDiscount);
-                        discountText = `🏷️ ส่วนลดโปรโมชั่นพิเศษ = -${formatMoney(discountAmount)} บาท\n`;
-                    }
+                if (promoType === 'percent') {
+                    doorDiscountTotal = (totalDoorPrice * promoVal) / 100;
+                } else {
+                    doorDiscountTotal = promoVal;
                 }
             }
 
-            const grandTotal = Math.max(0, subtotalBeforeDiscount - discountAmount);
-
-            if (discountAmount > 0) {
-                receiptItems['door_discount'] = {
-                    label: `ส่วนลดโปรโมชั่นพิเศษ`,
-                    qty: 1, unit: 'รายการ', unitPrice: -discountAmount, price: -discountAmount
-                };
-            }
+            const grandTotalDoors = Math.max(0, totalDoorPrice - doorDiscountTotal) + totalInstallPrice;
 
             currentCalcData = {
                 mode: 'door',
-                productName: `ประตู วงกบ และลูกบิด (${doorItems.length} รายการ)`,
-                pattern: `รวม ${totalQty} ชิ้น/ชุด`,
+                productName: `ประตู วงกบ และอุปกรณ์ (${totalQty} รายการ)`,
+                pattern: `รวมบริการติดตั้ง/จัดส่ง`,
                 sqmPerBox: 1,
                 area: totalQty,
                 wastePercent: 0,
                 areaWithWaste: totalQty,
                 boxesNeeded: totalQty,
-                pricePerBox: 0,
+                pricePerBox: totalDoorPrice / (totalQty || 1),
                 totalWoodPrice: totalDoorPrice,
                 accessories: receiptItems,
-                totalAccessories: totalInstallPrice, 
-                grandTotal: grandTotal
+                totalAccessories: totalInstallPluginHelper(totalInstallPrice, doorDiscountTotal),
+                grandTotal: grandTotalDoors
             };
 
             saveToHistory(currentCalcData);
 
+            let textDoorSummary = doorDetailsForOutput.join('\n\n');
+            let discountText = "";
+            if (isDoorPromo && doorDiscountTotal > 0) {
+                discountText = `\n🏷️ ส่วนลดโปรโมชั่น: -${formatMoney(doorDiscountTotal)} บาท`;
+            }
+            let installText = totalInstallPrice > 0 ? `\n🛠️ รวมค่าติดตั้ง/จัดส่ง: ${formatMoney(totalInstallPrice)} บาท` : '';
+
             const outputString = 
-`🚪🔒✨ ประเมินราคาประตู วงกบ และลูกบิด ✨🔒🚪
+`✨🚪 ใบประเมินราคาประตู วงกบ & อุปกรณ์ 🚪✨
 
-${doorDetailsForOutput.join('\n\n')}
+${textDoorSummary}
 
--------------------------
-💰 ยอดรวมราคาสินค้า = ${formatMoney(totalDoorPrice)} บาท
-${totalInstallPrice > 0 ? `📦/🛠️ ยอดรวมค่าบริการ/จัดส่ง = ${formatMoney(totalInstallPrice)} บาท\n` : ''}${discountText}✨ ยอดรวมสุทธิทั้งหมด ${formatMoney(grandTotal)} บาทค่ะ ✨`;
+----------------------------------------
+💰 รวมราคาสินค้า: ${formatMoney(totalDoorPrice)} บาท${discountText}${installText}
+✨ ยอดรวมสุทธิทั้งหมด ${formatMoney(grandTotalDoors)} บาทค่ะ ✨`;
 
-            outputBox.value = outputString;
+            if (outputBox) outputBox.value = outputString;
+        }
+
+        function totalInstallPluginHelper(install, discount) {
+            return install - discount;
         }
 
         function calculateFloor() {
-            const areaInput = document.getElementById('area').value;
             const outputBox = document.getElementById('outputText');
-
-            if (!areaInput || areaInput <= 0) {
-                outputBox.value = "💡 กรุณากรอกขนาดพื้นที่หน้างาน (ตร.ม.) เพื่อเริ่มต้นคำนวณราคาครับ";
-                currentCalcData = null;
-                return;
-            }
-
-            const area = parseFloat(areaInput);
+            const area = parseFloat(document.getElementById('area').value) || 0;
+            const sqmPerBox = parseFloat(document.getElementById('sqmPerBox').value) || 2.67;
             const sizeSelectVal = document.getElementById('sizeSelect').value;
             const patternSelectVal = document.getElementById('patternSelect').value;
-            const wastePercent = parseFloat(document.getElementById('waste').value);
-            const sqmPerBox = parseFloat(document.getElementById('sqmPerBox').value) || 2.67;
+            const wastePercent = parseFloat(document.getElementById('waste').value) || 5;
 
             const parts = sizeSelectVal.split('_');
-            let pricePerSqm = parseFloat(parts[0]);
+            const pricePerSqm = parseFloat(parts[0]);
             const thicknessStr = parts[1];
             const serviceType = parts[2];
 
-            if (document.getElementById('isPromo').checked) {
-                const promoVal = parseFloat(document.getElementById('promoPrice').value);
-                if (promoVal > 0) pricePerSqm = promoVal;
+            let pricePerBox = pricePerSqm * sqmPerBox;
+
+            const isPromo = document.getElementById('isPromo').checked;
+            if (isPromo) {
+                const promoPerSqm = parseFloat(document.getElementById('promoPrice').value) || 0;
+                if (promoPerSqm > 0) {
+                    pricePerBox = promoPerSqm * sqmPerBox;
+                }
             }
 
-            const areaWithWaste = area * (1 + (wastePercent / 100));
-            const pricePerBox = pricePerSqm * sqmPerBox;
+            const areaWithWaste = area * (1 + wastePercent / 100);
             const exactBoxes = areaWithWaste / sqmPerBox;
             const integerPart = Math.floor(exactBoxes);
             const decimalPart = exactBoxes - integerPart;
@@ -1756,7 +1789,7 @@ ${totalInstallPrice > 0 ? `📦/🛠️ ยอดรวมค่าบริก�
 ${textAccSummary}
 ✨ ยอดรวมสุทธิทั้งหมด ${formatMoney(grandTotal)} บาทค่ะ ✨`;
 
-            outputBox.value = outputString;
+            if (outputBox) outputBox.value = outputString;
         }
 
         function generateImage() {
@@ -1792,7 +1825,7 @@ ${textAccSummary}
 
             for (let key in currentCalcData.accessories) {
                 let item = currentCalcData.accessories[key];
-                if (item.qty > 0) {
+                if (item.qty > 0 && item.price > 0) {
                     hasAcc = true;
                     let div = document.createElement('div');
                     div.className = 'flex justify-between items-center text-[11px]';

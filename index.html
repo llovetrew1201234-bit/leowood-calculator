@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Leowood SPC Pro Calculator - Leowood Pakchong</title>
+    <title>Leowood SPC & Door Calculator - Leowood Pakchong</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -34,7 +34,6 @@
         }
     </style>
     <script>
-        // On page load or when changing themes, best to add inline in `head` to avoid FOUC
         if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
             document.documentElement.classList.add('dark')
         } else {
@@ -46,10 +45,9 @@
 
     <div class="max-w-2xl w-full bg-white/95 dark:bg-gray-900/95 backdrop-blur-md rounded-3xl shadow-2xl overflow-hidden border border-green-100 dark:border-gray-800 transition-all duration-300">
         
-        <!-- Header -->
         <div class="bg-gradient-to-r from-green-600 to-emerald-700 p-6 sm:p-7 text-white text-center relative overflow-hidden">
             <!-- Theme Toggle Button -->
-            <button onclick="toggleTheme()" class="absolute top-4 right-4 bg-white/20 hover:bg-white/30 text-white p-2 rounded-full backdrop-blur-sm transition cursor-pointer flex items-center justify-center shadow-sm" title="สลับโหมดมืด/สว่าง">
+            <button onclick="toggleTheme()" class="absolute top-4 right-4 bg-white/25 hover:bg-white/40 text-white p-2 rounded-full backdrop-blur-sm transition cursor-pointer flex items-center justify-center shadow-sm" title="สลับโหมดมืด/สว่าง">
                 <svg id="themeIcon" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
                 </svg>
@@ -57,32 +55,39 @@
 
             <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
             <div class="absolute -left-10 -top-10 w-40 h-40 bg-emerald-400/20 rounded-full blur-2xl pointer-events-none"></div>
-            <h1 class="text-2xl sm:text-3xl font-bold tracking-wide mb-1 relative z-10">✨ LEOWOOD SPC ✨</h1>
+            <h1 class="text-2xl sm:text-3xl font-bold tracking-wide mb-1 relative z-10">✨ LEOWOOD PRO ✨</h1>
             <p class="text-green-100 dark:text-emerald-200 text-xs sm:text-sm tracking-wide relative z-10">ระบบคำนวณราคาอัจฉริยะ | <span class="opacity-80 font-light">Leowood Pakchong</span></p>
+            
+            <!-- Mode Switcher Tabs -->
+            <div class="flex justify-center gap-3 mt-4 relative z-10">
+                <button onclick="switchMode('floor')" id="tabFloor" class="px-5 py-2 rounded-2xl text-xs font-bold transition shadow-sm cursor-pointer bg-white text-green-800 flex items-center gap-1.5">
+                    🟢 หมวดพื้น (SPC)
+                </button>
+                <button onclick="switchMode('door')" id="tabDoor" class="px-5 py-2 rounded-2xl text-xs font-bold transition shadow-sm cursor-pointer bg-green-800/60 text-white hover:bg-green-800 flex items-center gap-1.5">
+                    🚪 ประตู, วงกบ & อุปกรณ์
+                </button>
+            </div>
         </div>
 
-        <!-- Form Content -->
-        <div class="p-6 sm:p-8 space-y-6">
-            
+        <!-- ================= FLOOR CALCULATOR SECTION ================= -->
+        <div id="sectionFloor" class="p-6 sm:p-8 space-y-6">
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 <!-- Area Input with Room Calculator Trigger -->
                 <div class="space-y-1.5">
                     <div class="flex justify-between items-center">
                         <label for="area" class="block text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">ขนาดพื้นที่หน้างาน (ตร.ม.) <span class="text-red-500">*</span></label>
-                        <div class="flex items-center gap-2">
-                            <button onclick="openRoomModal()" class="text-xs text-green-600 dark:text-green-400 hover:underline flex items-center gap-1 font-medium cursor-pointer">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
-                                ขนาดห้อง
-                            </button>
-                        </div>
+                        <button onclick="openRoomModal()" class="text-xs text-green-600 dark:text-green-400 hover:underline flex items-center gap-1 font-medium cursor-pointer bg-green-50 dark:bg-green-900/40 px-2 py-0.5 rounded-lg border border-green-200 dark:border-green-800">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+                            รวมขนาดหลายห้อง
+                        </button>
                     </div>
                     <div class="relative">
                         <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/></svg>
                         </span>
                         <input type="number" id="area" placeholder="เช่น 45" 
-                            class="w-full pl-10 pr-4 py-3 bg-gray-50/50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition font-medium text-gray-800 dark:text-gray-100"
-                            oninput="calculate()">
+                            class="w-full pl-10 pr-4 py-3 bg-gray-50/50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition font-medium text-gray-800 dark:text-gray-100 shadow-sm"
+                            oninput="calculateFloor()">
                     </div>
                 </div>
                 
@@ -94,166 +99,178 @@
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
                         </span>
                         <input type="number" id="sqmPerBox" value="2.67" step="0.01" readonly
-                            class="w-full pl-10 pr-4 py-3 bg-gray-100 dark:bg-gray-800/80 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-600 dark:text-gray-400 font-semibold cursor-not-allowed outline-none">
+                            class="w-full pl-10 pr-4 py-3 bg-gray-100 dark:bg-gray-800/80 border border-gray-200 dark:border-gray-700 rounded-2xl text-gray-600 dark:text-gray-400 font-semibold cursor-not-allowed outline-none">
                     </div>
                 </div>
             </div>
 
+            <!-- SEPARATE CONTROLS: Size/Thickness & Pattern -->
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                <!-- Product Option -->
+                <!-- 1. Product Size / Thickness Selection -->
                 <div class="space-y-1.5">
                     <div class="flex justify-between items-center">
-                        <label for="productSelect" class="block text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">ประเภทและรุ่นสินค้า</label>
-                        <span id="thicknessTag" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-900/60 dark:text-emerald-300">ความหนา 5 มม.</span>
+                        <label for="sizeSelect" class="block text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">ขนาด / ความหนาและบริการ <span class="text-red-500">*</span></label>
+                        <span id="thicknessTag" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-green-100 text-green-800 dark:bg-green-900/60 dark:text-green-300">5 มม.</span>
                     </div>
-                    <select id="productSelect" class="w-full px-4 py-3 bg-gray-50/50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none text-sm font-medium text-gray-800 dark:text-gray-100 cursor-pointer shadow-sm" onchange="handleProductChange(); calculate();">
-                        <optgroup label="🟢 ความหนา 5 มม. (ปูตรง)" class="font-bold text-green-700 dark:text-green-400 bg-green-50/50 dark:bg-gray-800">
-                            <option value="459_5_wood_straight" class="text-gray-800 dark:text-gray-200 font-normal">🟢 5 มม. ปูตรง • เฉพาะไม้ (459.-/ตร.ม.)</option>
-                            <option value="659_5_install_straight" class="text-gray-800 dark:text-gray-200 font-normal">🟢 5 มม. ปูตรง • พร้อมติดตั้ง (659.-/ตร.ม.)</option>
+                    <select id="sizeSelect" class="w-full px-4 py-3 bg-gray-50/50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none text-sm font-medium text-gray-800 dark:text-gray-100 cursor-pointer shadow-sm" onchange="handleProductChange(); calculateFloor();">
+                        <optgroup label="🟢 ความหนา 5 มม." class="font-bold text-green-700 dark:text-green-400 bg-green-50/50 dark:bg-gray-800">
+                            <option value="459_5_wood" class="text-gray-800 dark:text-gray-200 font-normal">🟢 5 มม. • เฉพาะไม้ (459.-/ตร.ม.)</option>
+                            <option value="659_5_install" class="text-gray-800 dark:text-gray-200 font-normal">🟢 5 มม. • พร้อมติดตั้ง (659.-/ตร.ม.)</option>
                         </optgroup>
-                        <optgroup label="🌿 ความหนา 5 มม. (ปูลายก้างปลา)" class="font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-50/50 dark:bg-gray-800">
-                            <option value="550_5_wood_herringbone" class="text-gray-800 dark:text-gray-200 font-normal">🌿 5 มม. ก้างปลา • เฉพาะไม้ (550.-/ตร.ม.)</option>
-                            <option value="850_5_install_herringbone" class="text-gray-800 dark:text-gray-200 font-normal">🌿 5 มม. ก้างปลา • พร้อมติดตั้ง (850.-/ตร.ม.)</option>
+                        <optgroup label="🌿 ความหนา 5 มม. (พิเศษ)" class="font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-50/50 dark:bg-gray-800">
+                            <option value="550_5_wood" class="text-gray-800 dark:text-gray-200 font-normal">🌿 5 มม. (พิเศษ) • เฉพาะไม้ (550.-/ตร.ม.)</option>
+                            <option value="850_5_install" class="text-gray-800 dark:text-gray-200 font-normal">🌿 5 มม. (พิเศษ) • พร้อมติดตั้ง (850.-/ตร.ม.)</option>
                         </optgroup>
-                        <optgroup label="🔵 ความหนา 6 มม. (ปูตรง)" class="font-bold text-blue-700 dark:text-blue-400 bg-blue-50/50 dark:bg-gray-800">
-                            <option value="695_6_wood_straight" class="text-gray-800 dark:text-gray-200 font-normal">🔵 6 มม. ปูตรง • เฉพาะไม้ (695.-/ตร.ม.)</option>
-                            <option value="895_6_install_straight" class="text-gray-800 dark:text-gray-200 font-normal">🔵 6 มม. ปูตรง • พร้อมติดตั้ง (895.-/ตร.ม.)</option>
+                        <optgroup label="🔵 ความหนา 6 มม." class="font-bold text-blue-700 dark:text-blue-400 bg-blue-50/50 dark:bg-gray-800">
+                            <option value="695_6_wood" class="text-gray-800 dark:text-gray-200 font-normal">🔵 6 มม. • เฉพาะไม้ (695.-/ตร.ม.)</option>
+                            <option value="895_6_install" class="text-gray-800 dark:text-gray-200 font-normal">🔵 6 มม. • พร้อมติดตั้ง (895.-/ตร.ม.)</option>
                         </optgroup>
-                        <optgroup label="🔷 ความหนา 6 มม. (ปูลายก้างปลา)" class="font-bold text-indigo-700 dark:text-indigo-400 bg-indigo-50/50 dark:bg-gray-800">
-                            <option value="695_6_wood_herringbone" class="text-gray-800 dark:text-gray-200 font-normal">🔷 6 มม. ก้างปลา • เฉพาะไม้ (695.-/ตร.ม.)</option>
-                            <option value="995_6_install_herringbone" class="text-gray-800 dark:text-gray-200 font-normal">🔷 6 มม. ก้างปลา • พร้อมติดตั้ง (995.-/ตร.ม.)</option>
+                        <optgroup label="🔷 ความหนา 6 มม. (พรีเมียม)" class="font-bold text-indigo-700 dark:text-indigo-400 bg-indigo-50/50 dark:bg-gray-800">
+                            <option value="695_6_wood_alt" class="text-gray-800 dark:text-gray-200 font-normal">🔷 6 มม. พรีเมียม • เฉพาะไม้ (695.-/ตร.ม.)</option>
+                            <option value="995_6_install_alt" class="text-gray-800 dark:text-gray-200 font-normal">🔷 6 มม. พรีเมียม • พร้อมติดตั้ง (995.-/ตร.ม.)</option>
                         </optgroup>
-                        <optgroup label="🟣 ความหนา 8 มม. (ปูตรง)" class="font-bold text-purple-700 dark:text-purple-400 bg-purple-50/50 dark:bg-gray-800">
-                            <option value="890_8_wood_straight" class="text-gray-800 dark:text-gray-200 font-normal">🟣 8 มม. ปูตรง • เฉพาะไม้ (890.-/ตร.ม.)</option>
-                            <option value="1110_8_install_straight" class="text-gray-800 dark:text-gray-200 font-normal">🟣 8 มม. ปูตรง • พร้อมติดตั้ง (1,110.-/ตร.ม.)</option>
+                        <optgroup label="🟣 ความหนา 8 มม." class="font-bold text-purple-700 dark:text-purple-400 bg-purple-50/50 dark:bg-gray-800">
+                            <option value="890_8_wood" class="text-gray-800 dark:text-gray-200 font-normal">🟣 8 มม. • เฉพาะไม้ (890.-/ตร.ม.)</option>
+                            <option value="1110_8_install" class="text-gray-800 dark:text-gray-200 font-normal">🟣 8 มม. • พร้อมติดตั้ง (1,110.-/ตร.ม.)</option>
                         </optgroup>
-                        <optgroup label="🟠 ไม้พื้น ISF (ปูตรง)" class="font-bold text-amber-700 dark:text-amber-400 bg-amber-50/50 dark:bg-gray-800">
-                            <option value="760_ISF_wood_straight" class="text-gray-800 dark:text-gray-200 font-normal">🟠 ISF ปูตรง • เฉพาะไม้ (760.-/ตร.ม.)</option>
-                            <option value="960_ISF_install_straight" class="text-gray-800 dark:text-gray-200 font-normal">🟠 ISF ปูตรง • พร้อมติดตั้ง (960.-/ตร.ม.)</option>
+                        <optgroup label="🟠 ไม้พื้น ISF" class="font-bold text-amber-700 dark:text-amber-400 bg-amber-50/50 dark:bg-gray-800">
+                            <option value="760_ISF_wood" class="text-gray-800 dark:text-gray-200 font-normal">🟠 ISF • เฉพาะไม้ (760.-/ตร.ม.)</option>
+                            <option value="960_ISF_install" class="text-gray-800 dark:text-gray-200 font-normal">🟠 ISF • พร้อมติดตั้ง (960.-/ตร.ม.)</option>
                         </optgroup>
                     </select>
                 </div>
-                
-                <!-- Waste Margin Option -->
+
+                <!-- 2. Installation Pattern Selection -->
+                <div class="space-y-1.5">
+                    <label for="patternSelect" class="block text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">รูปแบบการปู (Pattern) <span class="text-red-500">*</span></label>
+                    <select id="patternSelect" class="w-full px-4 py-3 bg-gray-50/50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none text-sm font-medium text-gray-800 dark:text-gray-100 cursor-pointer shadow-sm" onchange="handlePatternChange(); calculateFloor();">
+                        <option value="straight">📐 ปูตรง (มาตรฐาน)</option>
+                        <option value="herringbone">🌿 ปูลายก้างปลา (Herringbone)</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Waste Margin Option -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 <div class="space-y-1.5">
                     <label for="waste" class="block text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">เผื่อตัดเข้ามุม (Waste)</label>
-                    <select id="waste" class="w-full px-4 py-3 bg-gray-50/50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none text-sm font-medium text-gray-800 dark:text-gray-100" onchange="calculate()">
+                    <select id="waste" class="w-full px-4 py-3 bg-gray-50/50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none text-sm font-medium text-gray-800 dark:text-gray-100 shadow-sm" onchange="calculateFloor()">
                         <option value="5">5% (มาตรฐาน / ปูตรงทั่วไป)</option>
                         <option value="7">7% (ปูตรงห้องซับซ้อน)</option>
                         <option value="18" selected>18% (ลายก้างปลา)</option>
                     </select>
                 </div>
+
+                <!-- Promotional Price Box Toggle -->
+                <div class="bg-gradient-to-br from-green-50 to-emerald-50 dark:from-gray-800 dark:to-gray-800/80 p-3.5 rounded-2xl border border-green-200/60 dark:border-gray-700 shadow-sm flex flex-col justify-center">
+                    <div class="flex items-center">
+                        <input type="checkbox" id="isPromo" class="w-4 h-4 text-green-600 rounded border-gray-300 focus:ring-green-500 cursor-pointer" onchange="togglePromo(); calculateFloor();">
+                        <label for="isPromo" class="ml-2 text-xs font-semibold text-green-900 dark:text-green-300 cursor-pointer">ระบุราคาจัดโปรโมชั่นเอง</label>
+                    </div>
+                    <div id="promoPriceDiv" class="hidden pt-2">
+                        <input type="number" id="promoPrice" placeholder="ราคาโปรต่อ ตร.ม. เช่น 359" 
+                            class="w-full px-3 py-2 bg-white dark:bg-gray-900 border border-green-300 dark:border-gray-600 rounded-xl text-xs font-medium text-gray-800 dark:text-gray-100 outline-none shadow-inner"
+                            oninput="calculateFloor()">
+                    </div>
+                </div>
             </div>
 
-            <!-- Promotional Price Box -->
-            <div class="bg-gradient-to-br from-green-50 to-emerald-50 dark:from-gray-800 dark:to-gray-800/80 p-4 rounded-2xl border border-green-200/60 dark:border-gray-700 shadow-sm space-y-3">
-                <div class="flex items-center">
-                    <input type="checkbox" id="isPromo" class="w-5 h-5 text-green-600 rounded border-gray-300 focus:ring-green-500 cursor-pointer" onchange="togglePromo(); calculate();">
-                    <label for="isPromo" class="ml-2.5 text-sm font-semibold text-green-900 dark:text-green-300 cursor-pointer">ระบุราคาจัดโปรโมชั่น / กำหนดราคาพิเศษเอง</label>
-                </div>
-                <div id="promoPriceDiv" class="hidden pt-1">
-                    <label for="promoPrice" class="block text-xs font-medium text-green-800 dark:text-green-400 mb-1">ราคาโปรโมชั่น ต่อ ตร.ม. (บาท)</label>
-                    <input type="number" id="promoPrice" placeholder="เช่น 359" 
-                        class="w-full px-4 py-2.5 bg-white dark:bg-gray-900 border border-green-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition text-sm font-medium text-gray-800 dark:text-gray-100"
-                        oninput="calculate()">
-                </div>
-            </div>
-
-            <div class="bg-gray-50 dark:bg-gray-800/50 p-5 rounded-2xl border border-gray-200/80 dark:border-gray-700 space-y-4">
-                <div class="flex items-center justify-between border-b border-gray-200 dark:border-gray-700 pb-2">
+            <!-- Accessories Group -->
+            <div class="bg-gray-50/80 dark:bg-gray-800/50 p-5 rounded-2xl border border-gray-200/80 dark:border-gray-700 space-y-4 shadow-sm">
+                <div class="flex items-center justify-between border-b border-gray-200 dark:border-gray-700 pb-2.5">
                     <h3 class="text-sm font-bold text-gray-800 dark:text-gray-200 flex items-center gap-2">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
-                        หมวดอุปกรณ์เสริม (Accessories)
+                        อุปกรณ์เสริม (Accessories)
                     </h3>
-                    <span id="accServiceBadge" class="text-xs bg-green-100 text-green-700 dark:bg-green-900/60 dark:text-green-300 px-2.5 py-1 rounded-full font-medium">โหมด: พร้อมติดตั้ง</span>
+                    <span id="accServiceBadge" class="text-xs bg-green-100 text-green-700 dark:bg-green-900/60 dark:text-green-300 px-3 py-1 rounded-full font-medium shadow-sm">โหมด: พร้อมติดตั้ง</span>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
-                    <!-- Skirting Boards & Profiles -->
-                    <div class="space-y-3 bg-white dark:bg-gray-800 p-3.5 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm">
+                    <!-- Skirting & Profiles -->
+                    <div class="space-y-3 bg-white dark:bg-gray-800 p-4 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm">
                         <label class="block font-semibold text-gray-700 dark:text-gray-300 text-xs uppercase tracking-wide">บัวเชิงผนัง / ตัวจบ</label>
                         
-                        <!-- Materials Only Profiles (Collapsible / Clean Layout) -->
+                        <!-- Materials Only Profiles -->
                         <div id="materialsProfilesContainer" class="hidden space-y-2">
-                            <div class="text-[11px] font-semibold text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-900/40 px-2 py-1 rounded mb-1">กลุ่มตัวจบ (100.- / 175.-)</div>
+                            <div class="text-[11px] font-semibold text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-900/40 px-2.5 py-1 rounded-lg mb-1.5">กลุ่มตัวจบ (T1-T4: 100.- | T5: 175.- | คิ้วเล็ก: 140.-)</div>
                             <div class="grid grid-cols-2 gap-2">
-                                <div class="flex items-center justify-between bg-gray-50 dark:bg-gray-900/60 p-1.5 rounded-lg border border-gray-100 dark:border-gray-800">
+                                <div class="flex items-center justify-between bg-gray-50 dark:bg-gray-900/60 p-2 rounded-xl border border-gray-100 dark:border-gray-800">
                                     <span class="text-[11px] text-gray-600 dark:text-gray-400">T1 (100)</span>
-                                    <input type="number" id="profileT1" placeholder="0" min="0" class="w-12 px-1 py-0.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded text-center text-xs font-semibold text-gray-800 dark:text-gray-100 outline-none" oninput="calculate()">
+                                    <input type="number" id="profileT1" placeholder="0" min="0" class="w-14 px-2 py-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-center text-xs font-semibold text-gray-800 dark:text-gray-100 outline-none shadow-sm" oninput="calculateFloor()">
                                 </div>
-                                <div class="flex items-center justify-between bg-gray-50 dark:bg-gray-900/60 p-1.5 rounded-lg border border-gray-100 dark:border-gray-800">
+                                <div class="flex items-center justify-between bg-gray-50 dark:bg-gray-900/60 p-2 rounded-xl border border-gray-100 dark:border-gray-800">
                                     <span class="text-[11px] text-gray-600 dark:text-gray-400">T2 (100)</span>
-                                    <input type="number" id="profileT2" placeholder="0" min="0" class="w-12 px-1 py-0.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded text-center text-xs font-semibold text-gray-800 dark:text-gray-100 outline-none" oninput="calculate()">
+                                    <input type="number" id="profileT2" placeholder="0" min="0" class="w-14 px-2 py-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-center text-xs font-semibold text-gray-800 dark:text-gray-100 outline-none shadow-sm" oninput="calculateFloor()">
                                 </div>
-                                <div class="flex items-center justify-between bg-gray-50 dark:bg-gray-900/60 p-1.5 rounded-lg border border-gray-100 dark:border-gray-800">
+                                <div class="flex items-center justify-between bg-gray-50 dark:bg-gray-900/60 p-2 rounded-xl border border-gray-100 dark:border-gray-800">
                                     <span class="text-[11px] text-gray-600 dark:text-gray-400">T3 (100)</span>
-                                    <input type="number" id="profileT3" placeholder="0" min="0" class="w-12 px-1 py-0.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded text-center text-xs font-semibold text-gray-800 dark:text-gray-100 outline-none" oninput="calculate()">
+                                    <input type="number" id="profileT3" placeholder="0" min="0" class="w-14 px-2 py-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-center text-xs font-semibold text-gray-800 dark:text-gray-100 outline-none shadow-sm" oninput="calculateFloor()">
                                 </div>
-                                <div class="flex items-center justify-between bg-gray-50 dark:bg-gray-900/60 p-1.5 rounded-lg border border-gray-100 dark:border-gray-800">
+                                <div class="flex items-center justify-between bg-gray-50 dark:bg-gray-900/60 p-2 rounded-xl border border-gray-100 dark:border-gray-800">
                                     <span class="text-[11px] text-gray-600 dark:text-gray-400">T4 (100)</span>
-                                    <input type="number" id="profileT4" placeholder="0" min="0" class="w-12 px-1 py-0.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded text-center text-xs font-semibold text-gray-800 dark:text-gray-100 outline-none" oninput="calculate()">
+                                    <input type="number" id="profileT4" placeholder="0" min="0" class="w-14 px-2 py-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-center text-xs font-semibold text-gray-800 dark:text-gray-100 outline-none shadow-sm" oninput="calculateFloor()">
                                 </div>
-                                <div class="flex items-center justify-between bg-gray-50 dark:bg-gray-900/60 p-1.5 rounded-lg border border-gray-100 dark:border-gray-800">
+                                <div class="flex items-center justify-between bg-gray-50 dark:bg-gray-900/60 p-2 rounded-xl border border-gray-100 dark:border-gray-800">
                                     <span class="text-[11px] text-gray-600 dark:text-gray-400">T5 (175)</span>
-                                    <input type="number" id="profileT5" placeholder="0" min="0" class="w-12 px-1 py-0.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded text-center text-xs font-semibold text-gray-800 dark:text-gray-100 outline-none" oninput="calculate()">
+                                    <input type="number" id="profileT5" placeholder="0" min="0" class="w-14 px-2 py-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-center text-xs font-semibold text-gray-800 dark:text-gray-100 outline-none shadow-sm" oninput="calculateFloor()">
                                 </div>
-                                <div class="flex items-center justify-between bg-gray-50 dark:bg-gray-900/60 p-1.5 rounded-lg border border-gray-100 dark:border-gray-800">
+                                <div class="flex items-center justify-between bg-gray-50 dark:bg-gray-900/60 p-2 rounded-xl border border-gray-100 dark:border-gray-800">
                                     <span class="text-[11px] text-gray-600 dark:text-gray-400">คิ้วเล็ก (140)</span>
-                                    <input type="number" id="profileSmall" placeholder="0" min="0" class="w-12 px-1 py-0.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded text-center text-xs font-semibold text-gray-800 dark:text-gray-100 outline-none" oninput="calculate()">
+                                    <input type="number" id="profileSmall" placeholder="0" min="0" class="w-14 px-2 py-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-center text-xs font-semibold text-gray-800 dark:text-gray-100 outline-none shadow-sm" oninput="calculateFloor()">
                                 </div>
                             </div>
-                            <div class="text-[11px] font-semibold text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-900/40 px-2 py-1 rounded mt-2 mb-1">กลุ่มบัวเชิงผนัง</div>
+                            <div class="text-[11px] font-semibold text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-900/40 px-2.5 py-1 rounded-lg mt-3 mb-1.5">กลุ่มบัวเชิงผนัง</div>
                         </div>
 
-                        <div class="flex items-center justify-between gap-2">
+                        <div class="flex items-center justify-between gap-2 bg-gray-50/50 dark:bg-gray-900/40 p-2 rounded-xl">
                             <span class="text-xs text-gray-600 dark:text-gray-400" id="skirt3inLabel">ขนาด 3 นิ้ว (15.-/เส้น)</span>
-                            <div class="flex items-center gap-1">
-                                <input type="number" id="skirt3in" placeholder="0" min="0" class="w-16 px-2 py-1 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg text-center text-xs font-semibold text-gray-800 dark:text-gray-100 focus:ring-1 focus:ring-green-500 outline-none" oninput="calculate()">
+                            <div class="flex items-center gap-1.5">
+                                <input type="number" id="skirt3in" placeholder="0" min="0" class="w-16 px-2.5 py-1.5 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl text-center text-xs font-semibold text-gray-800 dark:text-gray-100 focus:ring-1 focus:ring-green-500 outline-none shadow-sm" oninput="calculateFloor()">
                                 <span class="text-xs text-gray-500">เส้น</span>
                             </div>
                         </div>
 
-                        <div class="flex items-center justify-between gap-2">
+                        <div class="flex items-center justify-between gap-2 bg-gray-50/50 dark:bg-gray-900/40 p-2 rounded-xl">
                             <span class="text-xs text-gray-600 dark:text-gray-400" id="skirt4inLabel">ขนาด 4 นิ้ว (30.-/เส้น)</span>
-                            <div class="flex items-center gap-1">
-                                <input type="number" id="skirt4in" placeholder="0" min="0" class="w-16 px-2 py-1 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg text-center text-xs font-semibold text-gray-800 dark:text-gray-100 focus:ring-1 focus:ring-green-500 outline-none" oninput="calculate()">
+                            <div class="flex items-center gap-1.5">
+                                <input type="number" id="skirt4in" placeholder="0" min="0" class="w-16 px-2.5 py-1.5 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl text-center text-xs font-semibold text-gray-800 dark:text-gray-100 focus:ring-1 focus:ring-green-500 outline-none shadow-sm" oninput="calculateFloor()">
                                 <span class="text-xs text-gray-500">เส้น</span>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Foam & Sealants (Hidden when installed) -->
-                    <div id="foamSealantGroup" class="space-y-3 bg-white dark:bg-gray-800 p-3.5 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm">
+                    <!-- Foam & Sealants -->
+                    <div id="foamSealantGroup" class="space-y-3 bg-white dark:bg-gray-800 p-4 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm">
                         <label class="block font-semibold text-gray-700 dark:text-gray-300 text-xs uppercase tracking-wide">โฟม และ กาว / ยาแนว</label>
                         
-                        <div class="flex items-center justify-between gap-2">
+                        <div class="flex items-center justify-between gap-2 bg-gray-50/50 dark:bg-gray-900/40 p-2 rounded-xl">
                             <span class="text-xs text-gray-600 dark:text-gray-400">แผ่นโฟมรองพื้น (159.-/ม้วน)</span>
-                            <div class="flex items-center gap-1">
-                                <input type="number" id="foamRolls" placeholder="0" min="0" class="w-16 px-2 py-1 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg text-center text-xs font-semibold text-gray-800 dark:text-gray-100 focus:ring-1 focus:ring-green-500 outline-none" oninput="calculate()">
+                            <div class="flex items-center gap-1.5">
+                                <input type="number" id="foamRolls" placeholder="0" min="0" class="w-16 px-2.5 py-1.5 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl text-center text-xs font-semibold text-gray-800 dark:text-gray-100 focus:ring-1 focus:ring-green-500 outline-none shadow-sm" oninput="calculateFloor()">
                                 <span class="text-xs text-gray-500">ม้วน</span>
                             </div>
                         </div>
 
-                        <div class="flex items-center justify-between gap-2">
+                        <div class="flex items-center justify-between gap-2 bg-gray-50/50 dark:bg-gray-900/40 p-2 rounded-xl">
                             <span class="text-xs text-gray-600 dark:text-gray-400">ยาแนวอะคริลิค (80.-/หลอด)</span>
-                            <div class="flex items-center gap-1">
-                                <input type="number" id="acrylicSealant" placeholder="0" min="0" class="w-16 px-2 py-1 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg text-center text-xs font-semibold text-gray-800 dark:text-gray-100 focus:ring-1 focus:ring-green-500 outline-none" oninput="calculate()">
+                            <div class="flex items-center gap-1.5">
+                                <input type="number" id="acrylicSealant" placeholder="0" min="0" class="w-16 px-2.5 py-1.5 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl text-center text-xs font-semibold text-gray-800 dark:text-gray-100 focus:ring-1 focus:ring-green-500 outline-none shadow-sm" oninput="calculateFloor()">
                                 <span class="text-xs text-gray-500">หลอด</span>
                             </div>
                         </div>
 
-                        <div class="flex items-center justify-between gap-2">
+                        <div class="flex items-center justify-between gap-2 bg-gray-50/50 dark:bg-gray-900/40 p-2 rounded-xl">
                             <span class="text-xs text-gray-600 dark:text-gray-400">กาวตะปู (120.-/หลอด)</span>
-                            <div class="flex items-center gap-1">
-                                <input type="number" id="nailGlue" placeholder="0" min="0" class="w-16 px-2 py-1 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg text-center text-xs font-semibold text-gray-800 dark:text-gray-100 focus:ring-1 focus:ring-green-500 outline-none" oninput="calculate()">
+                            <div class="flex items-center gap-1.5">
+                                <input type="number" id="nailGlue" placeholder="0" min="0" class="w-16 px-2.5 py-1.5 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl text-center text-xs font-semibold text-gray-800 dark:text-gray-100 focus:ring-1 focus:ring-green-500 outline-none shadow-sm" oninput="calculateFloor()">
                                 <span class="text-xs text-gray-500">หลอด</span>
                             </div>
                         </div>
 
-                        <div class="flex items-center justify-between gap-2">
+                        <div class="flex items-center justify-between gap-2 bg-gray-50/50 dark:bg-gray-900/40 p-2 rounded-xl">
                             <span class="text-xs text-gray-600 dark:text-gray-400">ยาแนวซิลิโคน (139.-/หลอด)</span>
-                            <div class="flex items-center gap-1">
-                                <input type="number" id="siliconeSealant" placeholder="0" min="0" class="w-16 px-2 py-1 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg text-center text-xs font-semibold text-gray-800 dark:text-gray-100 focus:ring-1 focus:ring-green-500 outline-none" oninput="calculate()">
+                            <div class="flex items-center gap-1.5">
+                                <input type="number" id="siliconeSealant" placeholder="0" min="0" class="w-16 px-2.5 py-1.5 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl text-center text-xs font-semibold text-gray-800 dark:text-gray-100 focus:ring-1 focus:ring-green-500 outline-none shadow-sm" oninput="calculateFloor()">
                                 <span class="text-xs text-gray-500">หลอด</span>
                             </div>
                         </div>
@@ -261,16 +278,17 @@
                 </div>
             </div>
 
-            <div class="bg-gray-50 dark:bg-gray-800/50 p-4 rounded-2xl border border-gray-200/80 dark:border-gray-700 space-y-3">
+            <!-- Self Leveling Preparation -->
+            <div class="bg-gray-50/80 dark:bg-gray-800/50 p-4 rounded-2xl border border-gray-200/80 dark:border-gray-700 space-y-3 shadow-sm">
                 <div class="flex items-center">
-                    <input type="checkbox" id="isSelfLeveling" class="w-5 h-5 text-green-600 rounded border-gray-300 focus:ring-green-500 cursor-pointer" onchange="toggleSelfLeveling(); calculate();">
+                    <input type="checkbox" id="isSelfLeveling" class="w-5 h-5 text-green-600 rounded border-gray-300 focus:ring-green-500 cursor-pointer" onchange="toggleSelfLeveling(); calculateFloor();">
                     <label for="isSelfLeveling" class="ml-2.5 text-sm font-semibold text-gray-800 dark:text-gray-200 cursor-pointer">🛠️ เพิ่มค่าบริการปรับปูน Self-Leveling</label>
                 </div>
                 
-                <div id="selfLevelingDiv" class="hidden pt-2 space-y-3 border-t border-gray-200 dark:border-gray-700">
+                <div id="selfLevelingDiv" class="hidden pt-3 space-y-3 border-t border-gray-200 dark:border-gray-700">
                     <div class="space-y-1">
                         <label class="block text-xs font-medium text-gray-700 dark:text-gray-300">เลือกประเภทความหนาปรับปูน:</label>
-                        <select id="selfLevelingType" class="w-full px-4 py-2.5 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none text-xs font-medium text-gray-800 dark:text-gray-100" onchange="calculate()">
+                        <select id="selfLevelingType" class="w-full px-4 py-2.5 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none text-xs font-medium text-gray-800 dark:text-gray-100" onchange="calculateFloor()">
                             <option value="350">ปรับปูนแบบบาง (ไม่เกิน 5 mm.) - 350.- / ตร.ม.</option>
                             <option value="650">ปรับปูนแบบบาง (ระหว่าง 5 - 10 mm.) - 650.- / ตร.ม.</option>
                         </select>
@@ -278,37 +296,85 @@
                     <div class="space-y-1">
                         <label class="block text-xs font-medium text-gray-700 dark:text-gray-300">พื้นที่ที่ต้องการปรับปูน (ตร.ม.) [ค่าเริ่มต้นเท่าพื้นที่หน้างาน]:</label>
                         <input type="number" id="selfLevelingArea" placeholder="เช่น 30" min="0"
-                            class="w-full px-4 py-2.5 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none text-xs font-medium text-gray-800 dark:text-gray-100"
-                            oninput="calculate()">
+                            class="w-full px-4 py-2.5 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none text-xs font-medium text-gray-800 dark:text-gray-100 shadow-sm"
+                            oninput="calculateFloor()">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= DOOR & HARDWARE CALCULATOR SECTION ================= -->
+        <div id="sectionDoor" class="p-6 sm:p-8 space-y-5 hidden bg-gray-50/50 dark:bg-gray-900/30">
+            <div class="flex justify-between items-center mb-1">
+                <h2 class="text-sm font-bold text-gray-800 dark:text-gray-200 flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                    เพิ่มรายการประตู วงกบ หรืออุปกรณ์
+                </h2>
+            </div>
+
+            <!-- Door Promotion / Discount Toggle -->
+            <div class="bg-gradient-to-br from-green-50 to-emerald-50 dark:from-gray-800 dark:to-gray-800/80 p-4 rounded-2xl border border-green-200/60 dark:border-gray-700 shadow-sm space-y-3">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <input type="checkbox" id="isDoorPromo" class="w-4 h-4 text-green-600 rounded border-gray-300 focus:ring-green-500 cursor-pointer" onchange="toggleDoorPromo(); calculateDoor();">
+                        <label for="isDoorPromo" class="ml-2 text-xs font-semibold text-green-900 dark:text-green-300 cursor-pointer">🏷️ ส่วนลดโปรโมชั่น (เฉพาะโหมดประตู)</label>
+                    </div>
+                </div>
+                <div id="doorPromoDiv" class="hidden grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                    <div class="space-y-1">
+                        <label class="block text-[10px] font-semibold text-gray-600 dark:text-gray-400 uppercase">ประเภทส่วนลด</label>
+                        <select id="doorPromoType" class="w-full px-3 py-2 bg-white dark:bg-gray-900 border border-green-300 dark:border-gray-600 rounded-xl text-xs font-medium text-gray-800 dark:text-gray-100 outline-none" onchange="calculateDoor()">
+                            <option value="percent">ลดเป็นเปอร์เซ็นต์ (%) เช่น 10%</option>
+                            <option value="fixed">ลดเป็นจำนวนเงินสุทธิ (บาท)</option>
+                        </select>
+                    </div>
+                    <div class="space-y-1">
+                        <label class="block text-[10px] font-semibold text-gray-600 dark:text-gray-400 uppercase">ค่าส่วนลด</label>
+                        <input type="number" id="doorPromoValue" placeholder="เช่น 10 หรือ 500" min="0"
+                            class="w-full px-3 py-2 bg-white dark:bg-gray-900 border border-green-300 dark:border-gray-600 rounded-xl text-xs font-medium text-gray-800 dark:text-gray-100 outline-none shadow-inner"
+                            oninput="calculateDoor()">
                     </div>
                 </div>
             </div>
 
+            <!-- Dynamic Item List Container -->
+            <div id="doorListContainer" class="space-y-4">
+                <!-- Items will be injected here via JS -->
+            </div>
+
+            <!-- Add More Button -->
+            <button onclick="addDoorItemUI()" class="w-full py-4 bg-green-50 dark:bg-green-900/40 hover:bg-green-100 dark:hover:bg-green-800/60 text-green-700 dark:text-green-300 border-2 border-dashed border-green-300 dark:border-green-700 rounded-2xl text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer shadow-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+                + เพิ่มรายการสินค้าอีกชิ้น
+            </button>
+        </div>
+
+        <!-- ================= COMMON OUTPUT & ACTIONS ================= -->
+        <div class="p-6 sm:p-8 pt-0 space-y-4">
             <div class="relative pt-2">
                 <div class="absolute top-4 right-3 flex gap-2 z-10">
-                    <button onclick="openHistoryModal()" class="bg-amber-600 hover:bg-amber-700 text-white px-3 py-1.5 rounded-lg text-xs font-medium transition shadow-sm flex items-center gap-1.5 cursor-pointer" title="ประวัติการคำนวณ">
+                    <button onclick="openHistoryModal()" class="bg-amber-600 hover:bg-amber-700 text-white px-3 py-1.5 rounded-xl text-xs font-medium transition shadow-sm flex items-center gap-1.5 cursor-pointer" title="ประวัติการคำนวณ">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                         ประวัติ (<span id="historyCount">0</span>)
                     </button>
-                    <button onclick="generateImage()" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-lg text-xs font-medium transition shadow-sm flex items-center gap-1.5 cursor-pointer">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                        สร้างรูปใบเสนอราคา
+                    <button onclick="generateImage()" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-xl text-xs font-medium transition shadow-sm flex items-center gap-1.5 cursor-pointer">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                        สร้างรูป
                     </button>
-                    <button onclick="copyToClipboard()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg text-xs font-medium transition shadow-sm flex items-center gap-1.5 cursor-pointer">
+                    <button onclick="copyToClipboard()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-xl text-xs font-medium transition shadow-sm flex items-center gap-1.5 cursor-pointer">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
-                        คัดลอกข้อความ
+                        คัดลอก
                     </button>
                 </div>
                 <!-- Output Textarea -->
                 <textarea id="outputText" readonly
-                    class="w-full h-80 p-4 pt-12 bg-gray-900 text-emerald-300 font-mono text-xs sm:text-sm rounded-2xl resize-none focus:outline-none shadow-inner leading-relaxed border border-gray-800"></textarea>
+                    class="w-full h-72 p-4 pt-14 bg-gray-900 text-emerald-300 font-mono text-xs sm:text-sm rounded-2xl resize-none focus:outline-none shadow-inner leading-relaxed border border-gray-800"></textarea>
             </div>
-
         </div>
 
         <!-- Footer Branding -->
-        <div class="bg-gray-50 dark:bg-gray-800 px-6 py-3.5 border-t border-gray-100 dark:border-gray-800 text-center text-xs text-gray-500 dark:text-gray-400 flex flex-col sm:flex-row items-center justify-between gap-2">
-            <span>Leowood SPC Pro Calculator</span>
+        <div class="bg-gray-50 dark:bg-gray-800 px-6 py-4 border-t border-gray-100 dark:border-gray-800 text-center text-xs text-gray-500 dark:text-gray-400 flex flex-col sm:flex-row items-center justify-between gap-2">
+            <span>Leowood SPC & Door Pro Calculator</span>
             <span class="font-medium text-green-700 dark:text-green-400">Crafted by Leowood Pakchong</span>
         </div>
     </div>
@@ -326,20 +392,18 @@
                 </button>
             </div>
             <div class="p-6 space-y-4 overflow-y-auto max-h-[60vh]">
-                <div id="roomList" class="space-y-3">
-                    <!-- Dynamic room items injected here -->
-                </div>
-                <button onclick="addRoomItem()" class="w-full py-2.5 bg-green-50 dark:bg-green-900/30 hover:bg-green-100 dark:hover:bg-green-900/50 text-green-700 dark:text-green-300 border border-green-200 dark:border-green-800/60 rounded-xl text-xs font-semibold transition flex items-center justify-center gap-1.5 cursor-pointer">
+                <div id="roomList" class="space-y-3"></div>
+                <button onclick="addRoomItem()" class="w-full py-2.5 bg-green-50 dark:bg-green-900/30 hover:bg-green-100 dark:hover:bg-green-900/50 text-green-700 dark:text-green-300 border border-green-200 dark:border-green-800/60 rounded-2xl text-xs font-semibold transition flex items-center justify-center gap-1.5 cursor-pointer">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
                     เพิ่มห้องใหม่
                 </button>
-                <div class="bg-gray-50 dark:bg-gray-800 p-3.5 rounded-xl flex justify-between items-center text-sm font-bold text-gray-800 dark:text-gray-100">
+                <div class="bg-gray-50 dark:bg-gray-800 p-3.5 rounded-2xl flex justify-between items-center text-sm font-bold text-gray-800 dark:text-gray-100 shadow-inner">
                     <span>รวมพื้นที่ทั้งหมด:</span>
                     <span id="totalRoomArea" class="text-green-600 dark:text-green-400 text-lg">0.00 ตร.ม.</span>
                 </div>
             </div>
             <div class="p-4 bg-gray-50 dark:bg-gray-800/50 grid grid-cols-2 gap-3 border-t border-gray-100 dark:border-gray-800">
-                <button onclick="closeRoomModal()" class="px-4 py-2.5 text-xs font-semibold text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl hover:bg-gray-100 transition cursor-pointer">
+                <button onclick="closeRoomModal()" class="px-4 py-2.5 text-xs font-semibold text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl hover:bg-gray-100 transition cursor-pointer shadow-sm">
                     ยกเลิก
                 </button>
                 <button onclick="applyRoomArea()" class="px-4 py-2.5 text-xs font-semibold text-white bg-green-600 rounded-xl hover:bg-green-700 transition shadow-md cursor-pointer">
@@ -361,12 +425,10 @@
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
                 </button>
             </div>
-            <div id="historyList" class="p-6 space-y-3 overflow-y-auto flex-1">
-                <!-- History items injected here -->
-            </div>
+            <div id="historyList" class="p-6 space-y-3 overflow-y-auto flex-1"></div>
             <div class="p-4 bg-gray-50 dark:bg-gray-800/50 flex justify-between items-center border-t border-gray-100 dark:border-gray-800">
                 <button onclick="clearHistory()" class="text-xs text-red-500 hover:text-red-700 font-medium cursor-pointer">ล้างประวัติทั้งหมด</button>
-                <button onclick="closeHistoryModal()" class="px-4 py-2 text-xs font-semibold text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl hover:bg-gray-100 transition cursor-pointer">
+                <button onclick="closeHistoryModal()" class="px-4 py-2 text-xs font-semibold text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl hover:bg-gray-100 transition cursor-pointer shadow-sm">
                     ปิด
                 </button>
             </div>
@@ -384,7 +446,7 @@
         <div id="receipt-template" class="bg-white w-[420px] p-0 rounded-2xl shadow-2xl overflow-hidden border border-gray-100 font-sans text-gray-800">
             <div class="bg-gradient-to-r from-green-600 to-emerald-700 p-6 text-center relative">
                 <h2 class="text-white text-2xl font-bold tracking-widest">LEOWOOD</h2>
-                <p class="text-green-100 text-xs mt-1">ใบประเมินราคาและอุปกรณ์เสริม (SPC) • Leowood Pakchong</p>
+                <p class="text-green-100 text-xs mt-1" id="receipt-subtitle">ใบประเมินราคาและอุปกรณ์ (SPC & Doors) • Leowood Pakchong</p>
             </div>
             
             <div class="p-6 space-y-4">
@@ -396,7 +458,7 @@
                     <div class="text-[11px] text-green-600 font-medium mt-1" id="receipt-sqm-box">1 กล่องปูได้ 2.67 ตร.ม.</div>
                 </div>
 
-                <div class="space-y-2 text-xs text-gray-600">
+                <div id="receipt-main-details" class="space-y-2 text-xs text-gray-600">
                     <div class="flex justify-between">
                         <span>พื้นที่หน้างาน:</span>
                         <span class="font-semibold text-gray-800" id="receipt-area">0 ตร.ม.</span>
@@ -413,9 +475,9 @@
                 
                 <hr class="border-dashed border-gray-200">
 
-                <div class="space-y-2 text-xs text-gray-600">
+                <div id="receipt-primary-summary" class="space-y-2 text-xs text-gray-600">
                     <div class="flex justify-between items-center">
-                        <span>จำนวนกล่องไม้พื้น:</span>
+                        <span id="receipt-primary-title">จำนวนกล่องไม้พื้น:</span>
                         <span class="font-bold text-gray-900 text-sm" id="receipt-boxes">0 กล่อง</span>
                     </div>
                     <div class="flex justify-between text-[11px] text-gray-500">
@@ -425,10 +487,10 @@
                 </div>
 
                 <div id="receipt-acc-section" class="space-y-1.5 text-xs text-gray-600 border-t border-dashed border-gray-200 pt-3 hidden">
-                    <div class="font-semibold text-gray-700 text-[11px] uppercase tracking-wider mb-1">รายการอุปกรณ์เสริมและบริการเพิ่มเติม</div>
+                    <div id="receipt-acc-title" class="font-semibold text-gray-700 text-[11px] uppercase tracking-wider mb-1">รายการสินค้าและบริการเพิ่มเติม</div>
                     <div id="receipt-acc-items" class="space-y-1.5"></div>
                     <div class="flex justify-between text-[11px] text-gray-500 pt-2 border-t border-gray-100">
-                        <span class="font-semibold">รวมอุปกรณ์เสริมและบริการ</span>
+                        <span id="receipt-acc-total-label" class="font-semibold">รวมรายการเพิ่มเติม</span>
                         <span id="receipt-acc-total" class="font-semibold text-gray-800">0.00 ฿</span>
                     </div>
                 </div>
@@ -460,7 +522,7 @@
                 <img id="previewImage" src="" alt="Quotation Preview" class="max-w-full h-auto shadow-xl rounded-xl">
             </div>
             <div class="p-4 bg-white dark:bg-gray-900 grid grid-cols-2 gap-3 border-t border-gray-100 dark:border-gray-800">
-                <button onclick="closeImageModal()" class="px-4 py-2.5 text-xs font-semibold text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-700 transition cursor-pointer">
+                <button onclick="closeImageModal()" class="px-4 py-2.5 text-xs font-semibold text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-700 transition cursor-pointer shadow-sm">
                     ปิดหน้าต่าง
                 </button>
                 <button onclick="downloadImage()" class="px-4 py-2.5 text-xs font-semibold text-white bg-green-600 rounded-xl hover:bg-green-700 transition shadow-md flex items-center justify-center gap-2 cursor-pointer">
@@ -472,9 +534,34 @@
     </div>
 
     <script>
-        // Formatting Helpers
         const formatMoney = (num) => num.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
         const formatNumber = (num) => parseFloat(num.toFixed(2)).toString();
+
+        let currentMode = 'floor'; // 'floor' or 'door'
+
+        function switchMode(mode) {
+            currentMode = mode;
+            const tabFloor = document.getElementById('tabFloor');
+            const tabDoor = document.getElementById('tabDoor');
+            const sectionFloor = document.getElementById('sectionFloor');
+            const sectionDoor = document.getElementById('sectionDoor');
+
+            if (mode === 'floor') {
+                tabFloor.className = "px-5 py-2 rounded-2xl text-xs font-bold transition shadow-sm cursor-pointer bg-white text-green-800 flex items-center gap-1.5";
+                tabDoor.className = "px-5 py-2 rounded-2xl text-xs font-bold transition shadow-sm cursor-pointer bg-green-800/60 text-white hover:bg-green-800 flex items-center gap-1.5";
+                sectionFloor.classList.remove('hidden');
+                sectionDoor.classList.add('hidden');
+                calculateFloor();
+            } else {
+                tabDoor.className = "px-5 py-2 rounded-2xl text-xs font-bold transition shadow-sm cursor-pointer bg-white text-green-800 flex items-center gap-1.5";
+                tabFloor.className = "px-5 py-2 rounded-2xl text-xs font-bold transition shadow-sm cursor-pointer bg-green-800/60 text-white hover:bg-green-800 flex items-center gap-1.5";
+                sectionDoor.classList.remove('hidden');
+                sectionFloor.classList.add('hidden');
+                if (doorItems.length === 0) addDoorItemUI();
+                renderDoorsUI();
+                calculateDoor();
+            }
+        }
 
         // Theme Toggle
         function toggleTheme() {
@@ -535,14 +622,14 @@
             container.innerHTML = '';
             rooms.forEach((room, idx) => {
                 const div = document.createElement('div');
-                div.className = 'flex items-center gap-2 bg-gray-50 dark:bg-gray-800 p-3 rounded-xl border border-gray-100 dark:border-gray-700';
+                div.className = 'flex items-center gap-2 bg-gray-50 dark:bg-gray-800 p-3 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm';
                 div.innerHTML = `
                     <span class="text-xs font-bold text-gray-500 w-16">${room.name}</span>
-                    <input type="number" placeholder="กว้าง (ม.)" value="${room.width}" oninput="updateRoom(${idx}, 'width', this.value)" class="w-24 px-3 py-1.5 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg text-xs font-medium text-gray-800 dark:text-gray-100 outline-none focus:ring-1 focus:ring-green-500">
+                    <input type="number" placeholder="กว้าง (ม.)" value="${room.width}" oninput="updateRoom(${idx}, 'width', this.value)" class="w-24 px-3 py-2 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl text-xs font-medium text-gray-800 dark:text-gray-100 outline-none focus:ring-1 focus:ring-green-500 shadow-inner">
                     <span class="text-gray-400">×</span>
-                    <input type="number" placeholder="ยาว (ม.)" value="${room.length}" oninput="updateRoom(${idx}, 'length', this.value)" class="w-24 px-3 py-1.5 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg text-xs font-medium text-gray-800 dark:text-gray-100 outline-none focus:ring-1 focus:ring-green-500">
+                    <input type="number" placeholder="ยาว (ม.)" value="${room.length}" oninput="updateRoom(${idx}, 'length', this.value)" class="w-24 px-3 py-2 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl text-xs font-medium text-gray-800 dark:text-gray-100 outline-none focus:ring-1 focus:ring-green-500 shadow-inner">
                     <span class="text-xs text-gray-500 flex-1 text-right font-semibold">= ${(parseFloat(room.width||0)*parseFloat(room.length||0)).toFixed(2)} ตร.ม.</span>
-                    <button onclick="removeRoomItem(${idx})" class="text-red-400 hover:text-red-600 p-1 cursor-pointer">
+                    <button onclick="removeRoomItem(${idx})" class="text-red-400 hover:text-red-600 p-1.5 cursor-pointer bg-red-50 dark:bg-red-900/30 rounded-xl">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
                     </button>
                 `;
@@ -560,18 +647,18 @@
                 document.getElementById('area').value = formatNumber(total);
                 const selfAreaInput = document.getElementById('selfLevelingArea');
                 if(selfAreaInput) selfAreaInput.value = formatNumber(total);
-                calculate();
+                calculateFloor();
             }
             closeRoomModal();
         }
 
         // History Management
-        let calcHistory = JSON.parse(localStorage.getItem('leowood_calc_history') || '[]');
+        let calcHistory = JSON.parse(localStorage.getItem('leowood_pro_calc_history') || '[]');
 
         function saveToHistory(data) {
             calcHistory.unshift({ ...data, date: new Date().toLocaleString('th-TH') });
             if (calcHistory.length > 20) calcHistory.pop();
-            localStorage.setItem('leowood_calc_history', JSON.stringify(calcHistory));
+            localStorage.setItem('leowood_pro_calc_history', JSON.stringify(calcHistory));
             updateHistoryCount();
         }
 
@@ -587,14 +674,14 @@
             } else {
                 calcHistory.forEach((item, idx) => {
                     const div = document.createElement('div');
-                    div.className = 'bg-gray-50 dark:bg-gray-800 p-3.5 rounded-xl border border-gray-100 dark:border-gray-700 space-y-1.5 text-xs';
+                    div.className = 'bg-gray-50 dark:bg-gray-800 p-4 rounded-2xl border border-gray-100 dark:border-gray-700 space-y-1.5 text-xs shadow-sm';
                     div.innerHTML = `
                         <div class="flex justify-between font-bold text-gray-800 dark:text-gray-200">
                             <span>${item.productName} (${item.pattern})</span>
                             <span class="text-green-600 dark:text-green-400 font-extrabold">${formatMoney(item.grandTotal)} ฿</span>
                         </div>
                         <div class="text-gray-500 dark:text-gray-400 flex justify-between">
-                            <span>พื้นที่: ${item.area} ตร.ม. | ใช้: ${item.boxesNeeded} กล่อง</span>
+                            <span>${item.mode === 'door' ? 'จำนวน: ' + item.boxesNeeded + ' ชิ้น/ชุด' : 'พื้นที่: ' + item.area + ' ตร.ม.'}</span>
                             <span class="text-[10px] opacity-75">${item.date}</span>
                         </div>
                     `;
@@ -614,55 +701,51 @@
 
         function clearHistory() {
             calcHistory = [];
-            localStorage.removeItem('leowood_calc_history');
+            localStorage.removeItem('leowood_pro_calc_history');
             updateHistoryCount();
             openHistoryModal();
         }
 
         function handleProductChange() {
-            const productSelect = document.getElementById('productSelect').value;
+            const sizeSelectVal = document.getElementById('sizeSelect').value;
             const sqmInput = document.getElementById('sqmPerBox');
-            const wasteSelect = document.getElementById('waste');
+            const patternSelectVal = document.getElementById('patternSelect').value;
             const badge = document.getElementById('accServiceBadge');
             const thicknessTag = document.getElementById('thicknessTag');
             
-            const parts = productSelect.split('_');
+            const parts = sizeSelectVal.split('_');
             const thicknessStr = parts[1];
             const serviceType = parts[2];
-            const patternType = parts[3];
 
-            // Update thickness badge color & text dynamically
             if (thicknessTag) {
                 if (thicknessStr === '5') {
-                    thicknessTag.innerText = patternType === 'herringbone' ? "5 มม. (ก้างปลา)" : "5 มม. (ปูตรง)";
+                    thicknessTag.innerText = "5 มม.";
                     thicknessTag.className = "text-[10px] font-bold px-2 py-0.5 rounded-full bg-green-100 text-green-800 dark:bg-green-900/60 dark:text-green-300";
                 } else if (thicknessStr === '6') {
-                    thicknessTag.innerText = patternType === 'herringbone' ? "6 มม. (ก้างปลา)" : "6 มม. (ปูตรง)";
+                    thicknessTag.innerText = "6 มม.";
                     thicknessTag.className = "text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900/60 dark:text-blue-300";
                 } else if (thicknessStr === '8') {
-                    thicknessTag.innerText = "8 มม. (ปูตรง)";
+                    thicknessTag.innerText = "8 มม.";
                     thicknessTag.className = "text-[10px] font-bold px-2 py-0.5 rounded-full bg-purple-100 text-purple-800 dark:bg-purple-900/60 dark:text-purple-300";
                 } else if (thicknessStr === 'ISF') {
-                    thicknessTag.innerText = "รุ่น ISF (ปูตรง)";
+                    thicknessTag.innerText = "รุ่น ISF";
                     thicknessTag.className = "text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 dark:bg-amber-900/60 dark:text-amber-300";
                 }
             }
             
-            if (patternType === 'herringbone') {
+            if (patternSelectVal === 'herringbone') {
                 if (thicknessStr === '5') sqmInput.value = 2.70;
                 else if (thicknessStr === '6') sqmInput.value = 2.25;
-                wasteSelect.value = "18";
             } else {
                 if (thicknessStr === '5') sqmInput.value = 2.67;
                 else if (thicknessStr === '6') sqmInput.value = 2.76;
                 else if (thicknessStr === '8') sqmInput.value = 2.07;
                 else if (thicknessStr === 'ISF') sqmInput.value = 2.20;
-                wasteSelect.value = "5";
             }
 
             const isInstall = serviceType === 'install';
             badge.innerText = isInstall ? "โหมด: พร้อมติดตั้ง" : "โหมด: เฉพาะไม้";
-            badge.className = isInstall ? "text-xs bg-green-100 text-green-700 dark:bg-green-900/60 dark:text-green-300 px-2.5 py-1 rounded-full font-medium" : "text-xs bg-amber-100 text-amber-700 dark:bg-amber-900/60 dark:text-amber-300 px-2.5 py-1 rounded-full font-medium";
+            badge.className = isInstall ? "text-xs bg-green-100 text-green-700 dark:text-green-900/60 dark:text-green-300 px-3 py-1 rounded-full font-medium shadow-sm" : "text-xs bg-amber-100 text-amber-700 dark:text-amber-900/60 dark:text-amber-300 px-3 py-1 rounded-full font-medium shadow-sm";
 
             const materialsProfilesContainer = document.getElementById('materialsProfilesContainer');
             const foamSealantGroup = document.getElementById('foamSealantGroup');
@@ -680,6 +763,17 @@
             }
         }
 
+        function handlePatternChange() {
+            const patternVal = document.getElementById('patternSelect').value;
+            const wasteSelect = document.getElementById('waste');
+            if (patternVal === 'herringbone') {
+                wasteSelect.value = "18";
+            } else {
+                wasteSelect.value = "5";
+            }
+            handleProductChange();
+        }
+
         function togglePromo() {
             const isPromo = document.getElementById('isPromo').checked;
             const promoDiv = document.getElementById('promoPriceDiv');
@@ -689,6 +783,18 @@
             } else {
                 promoDiv.classList.add('hidden');
                 document.getElementById('promoPrice').value = '';
+            }
+        }
+
+        function toggleDoorPromo() {
+            const isDoorPromo = document.getElementById('isDoorPromo').checked;
+            const doorPromoDiv = document.getElementById('doorPromoDiv');
+            if (isDoorPromo) {
+                doorPromoDiv.classList.remove('hidden');
+                document.getElementById('doorPromoValue').focus();
+            } else {
+                doorPromoDiv.classList.add('hidden');
+                document.getElementById('doorPromoValue').value = '';
             }
         }
 
@@ -709,28 +815,835 @@
             }
         }
 
+        const doorConfig = {
+            categories: {
+                complete: {
+                    label: '🚪 1. ประตูเหล็ก ครบชุด',
+                    types: {
+                        single: {
+                            label: 'บานเดี่ยว',
+                            patterns: {
+                                plain: { label: 'ลายเรียบ', sizes: { '80x200': { price: 8990, colors: ['Pure White', 'Davy Gray'] }, '90x200': { price: 9990, colors: ['Pure White', 'Davy Gray'] } } },
+                                wood: { label: 'ลายไม้', sizes: { '80x200': { price: 10990, colors: ['Sand Oak', 'Maple', 'Peanut', 'Ash Gray', 'Deep Brown', 'Black Cherry'] }, '90x200': { price: 11990, colors: ['Sand Oak', 'Maple', 'Peanut', 'Ash Gray', 'Deep Brown', 'Black Cherry'] } } }
+                            }
+                        },
+                        half: {
+                            label: 'บานครึ่ง',
+                            patterns: {
+                                plain: { label: 'ลายเรียบ', sizes: { '120x200': { price: 16990, colors: ['Pure White', 'Davy Gray'] } } },
+                                wood: { label: 'ลายไม้', sizes: { '120x200': { price: 18990, colors: ['Sand Oak', 'Maple', 'Peanut', 'Ash Gray', 'Deep Brown', 'Black Cherry'] } } }
+                            }
+                        },
+                        double: {
+                            label: 'บานคู่',
+                            patterns: {
+                                plain: { label: 'ลายเรียบ', sizes: { '160x200': { price: 21990, colors: ['Pure White', 'Davy Gray'] }, '180x200': { price: 25990, colors: ['Pure White', 'Davy Gray'] } } },
+                                wood: { label: 'ลายไม้', sizes: { '160x200': { price: 23990, colors: ['Sand Oak', 'Maple', 'Peanut', 'Ash Gray', 'Deep Brown', 'Black Cherry'] }, '180x200': { price: 27990, colors: ['Sand Oak', 'Maple', 'Peanut', 'Ash Gray', 'Deep Brown', 'Black Cherry'] } } }
+                            }
+                        }
+                    }
+                },
+                slab: {
+                    label: '🚪 2. ประตูเหล็ก เฉพาะบาน',
+                    types: {
+                        slabType: {
+                            label: 'เฉพาะบาน',
+                            patterns: {
+                                groove: { label: 'แบบเซาะร่อง', sizes: { '80x200': { price: 4890, colors: ['Satin White', 'Graphite'] }, '90x200': { price: 5190, colors: ['Satin White', 'Graphite'] } } },
+                                woodSlab: { label: 'แบบลายไม้', sizes: { '80x200': { price: 4990, colors: ['Sand Maple', 'Cocoa Ash'] }, '90x200': { price: 5290, colors: ['Sand Maple', 'Cocoa Ash'] } } }
+                            }
+                        }
+                    }
+                },
+                udoor: {
+                    label: '🚪 3. ประตู Udoor',
+                    types: {
+                        s1: {
+                            label: 'รุ่น S1',
+                            patterns: {
+                                bronze: { label: 'ลาย Bronze', sizes: { '70x200': { price: 2590, colors: ['Tango', 'Brownie Oak', 'Black Teak', 'Light Gray', 'Cinereo Oak'] }, '80x200': { price: 2690, colors: ['Tango', 'Brownie Oak', 'Black Teak', 'Light Gray', 'Cinereo Oak'] } } },
+                                silver: { label: 'ลาย Silver', sizes: { '70x200': { price: 2690, colors: ['Tango', 'Brownie Oak', 'Black Teak', 'Light Gray', 'Cinereo Oak'] }, '80x200': { price: 2790, colors: ['Tango', 'Brownie Oak', 'Black Teak', 'Light Gray', 'Cinereo Oak'] } } },
+                                gold: { label: 'ลาย Gold', sizes: { '70x200': { price: 3190, colors: ['Tango', 'Brownie Oak', 'Black Teak', 'Light Gray', 'Cinereo Oak'] }, '80x200': { price: 3290, colors: ['Tango', 'Brownie Oak', 'Black Teak', 'Light Gray', 'Cinereo Oak'] } } }
+                            }
+                        },
+                        s2: {
+                            label: 'รุ่น S2',
+                            patterns: {
+                                bronze: { label: 'ลาย Bronze', sizes: { '70x200': { price: 2790, colors: ['Gray', 'Cocoa', 'Mocha', 'Sand', 'Beige'] }, '80x200': { price: 2990, colors: ['Gray', 'Cocoa', 'Mocha', 'Sand', 'Beige'] } } },
+                                silver: { label: 'ลาย Silver', sizes: { '70x200': { price: 2990, colors: ['Gray', 'Cocoa', 'Mocha', 'Sand', 'Beige'] }, '80x200': { price: 3290, colors: ['Gray', 'Cocoa', 'Mocha', 'Sand', 'Beige'] } } },
+                                gold: { label: 'ลาย Gold', sizes: { '70x200': { price: 3290, colors: ['Gray', 'Cocoa', 'Mocha', 'Sand', 'Beige'] }, '80x200': { price: 3490, colors: ['Gray', 'Cocoa', 'Mocha', 'Sand', 'Beige'] } } }
+                            }
+                        },
+                        s3: {
+                            label: 'รุ่น S3',
+                            patterns: {
+                                pattern01: { label: 'ลาย01', sizes: { '80x200': { price: 2790, colors: ['White'] }, '90x200': { price: 2990, colors: ['White'] } } },
+                                pattern03: { label: 'ลาย03', sizes: { '80x200': { price: 2790, colors: ['White'] }, '90x200': { price: 2990, colors: ['White'] } } },
+                                pattern06: { label: 'ลาย06', sizes: { '80x200': { price: 2790, colors: ['White'] }, '90x200': { price: 2990, colors: ['White'] } } }
+                            }
+                        }
+                    }
+                },
+                frames: {
+                    label: '🪵 4. วงกบ',
+                    types: {
+                        frameSynthCasing: {
+                            label: 'วงกบไม้สังเคราะห์ (มีซับ)',
+                            patterns: {
+                                standard: { label: 'มาตรฐาน', sizes: { '70x200': { price: 1690, colors: ['White', 'Tango', 'Brownie Oak', 'Black Teak', 'Cinereo Oak'] }, '80x200': { price: 1790, colors: ['White', 'Tango', 'Brownie Oak', 'Black Teak', 'Cinereo Oak'] }, '90x200': { price: 1890, colors: ['White', 'Tango', 'Brownie Oak', 'Black Teak', 'Cinereo Oak'] } } }
+                            }
+                        },
+                        frameSynthStd: {
+                            label: 'วงกบไม้สังเคราะห์ (ธรรมดา)',
+                            patterns: {
+                                standard: { label: 'มาตรฐาน', sizes: { '70x200': { price: 1290, colors: ['White', 'Tango', 'Brownie Oak', 'Black Teak', 'Cinereo Oak'] }, '80x200': { price: 1390, colors: ['White', 'Tango', 'Brownie Oak', 'Black Teak', 'Cinereo Oak'] }, '90x200': { price: 1490, colors: ['White', 'Tango', 'Brownie Oak', 'Black Teak', 'Cinereo Oak'] } } }
+                            }
+                        },
+                        frameRealStd: {
+                            label: 'วงกบไม้จริง (ธรรมดา)',
+                            patterns: {
+                                standard: { label: 'มาตรฐาน', sizes: { '70x200': { price: 1090, colors: ['สีมะค่า', 'สีวอลนัท', 'สีขาว'] }, '80x200': { price: 1190, colors: ['สีมะค่า', 'สีวอลนัท', 'สีขาว'] }, '90x200': { price: 1290, colors: ['สีมะค่า', 'สีวอลนัท', 'สีขาว'] } } }
+                            }
+                        },
+                        frameRealCasing: {
+                            label: 'วงกบไม้จริง (มีซับ)',
+                            patterns: {
+                                standard: { label: 'มาตรฐาน', sizes: { '80x200': { price: 1390, colors: ['สีมะค่า', 'สีวอลนัท', 'สีขาว'] } } }
+                            }
+                        }
+                    }
+                },
+                hardware: {
+                    label: '🔒 5. ลูกบิด',
+                    types: {
+                        lwKnob: {
+                            label: 'Leowood • ลูกบิด 304',
+                            patterns: {
+                                toilet: { label: 'ห้องน้ำ', sizes: { 'standard': { price: 299 } } },
+                                general: { label: 'ห้องทั่วไป', sizes: { 'standard': { price: 359 } } }
+                            }
+                        },
+                        lwHinge: {
+                            label: 'Leowood • บานพับสแตนเลส 304 (กล่อง 3 ชิ้น)',
+                            patterns: {
+                                set3: { label: '1 กล่อง (3 ชิ้น)', sizes: { 'standard': { price: 299 } } }
+                            }
+                        },
+                        lwSeal: {
+                            label: 'Leowood • ซีลยาง',
+                            patterns: {
+                                standard: { label: 'มาตรฐาน', sizes: { 'standard': { price: 219 } } }
+                            }
+                        },
+                        jartonLever: {
+                            label: 'Jarton • ลูกบิดก้านโยก 304',
+                            patterns: {
+                                roundToilet: { label: 'ห้องน้ำ (ก้นกลม)', sizes: { 'standard': { price: 748 } } },
+                                sharpToilet: { label: 'ห้องน้ำ (ก้นแหลม)', sizes: { 'standard': { price: 748 } } },
+                                roundGeneral: { label: 'ห้องทั่วไป (ก้นกลม)', sizes: { 'standard': { price: 748 } } },
+                                sharpGeneral: { label: 'ห้องทั่วไป (ก้นแหลม)', sizes: { 'standard': { price: 748 } } }
+                            }
+                        },
+                        jartonKnob304: {
+                            label: 'Jarton • ลูกบิด 304',
+                            patterns: {
+                                toilet: { label: 'ห้องน้ำ', sizes: { 'standard': { price: 385 } } },
+                                general: { label: 'ห้องทั่วไป', sizes: { 'standard': { price: 385 } } }
+                            }
+                        },
+                        jartonKnob201: {
+                            label: 'Jarton • ลูกบิดห้องทั่วไป 201',
+                            patterns: {
+                                general: { label: 'ห้องทั่วไป', sizes: { 'standard': { price: 265 } } }
+                            }
+                        },
+                        digitalLock: {
+                            label: 'Digital Door Lock',
+                            patterns: {
+                                s1: { label: 'Smart Lock S1', sizes: { 'standard': { price: 1690 } } },
+                                secuon: { label: 'SecuON 397', sizes: { 'standard': { price: 13900 } } },
+                                philips: { label: 'Philips 609', sizes: { 'standard': { price: 13900 } } }
+                            }
+                        }
+                    }
+                }
+            }
+        };
+
+        const hardwareCatalog = [
+            { key: 'lwKnob_toilet', label: 'Leowood • ลูกบิด 304 (ห้องน้ำ)', price: 299 },
+            { key: 'lwKnob_general', label: 'Leowood • ลูกบิด 304 (ห้องทั่วไป)', price: 359 },
+            { key: 'lwHinge', label: 'Leowood • บานพับสแตนเลส 304 (กล่อง 3 ชิ้น)', price: 299 },
+            { key: 'lwSeal', label: 'Leowood • ซีลยาง', price: 219 },
+            { key: 'jartonLever_roundToilet', label: 'Jarton • ลูกบิดก้านโยก 304 ห้องน้ำ (ก้นกลม)', price: 748 },
+            { key: 'jartonLever_sharpToilet', label: 'Jarton • ลูกบิดก้านโยก 304 ห้องน้ำ (ก้นแหลม)', price: 748 },
+            { key: 'jartonLever_roundGeneral', label: 'Jarton • ลูกบิดก้านโยก 304 ห้องทั่วไป (ก้นกลม)', price: 748 },
+            { key: 'jartonLever_sharpGeneral', label: 'Jarton • ลูกบิดก้านโยก 304 ห้องทั่วไป (ก้นแหลม)', price: 748 },
+            { key: 'jartonKnob304_toilet', label: 'Jarton • ลูกบิด 304 (ห้องน้ำ)', price: 385 },
+            { key: 'jartonKnob304_general', label: 'Jarton • ลูกบิด 304 (ห้องทั่วไป)', price: 385 },
+            { key: 'jartonKnob201', label: 'Jarton • ลูกบิดห้องทั่วไป 201', price: 265 },
+            { key: 'digital_s1', label: 'Digital Door Lock - Smart Lock S1', price: 1690 },
+            { key: 'digital_secuon', label: 'Digital Door Lock - SecuON 397', price: 13900 },
+            { key: 'digital_philips', label: 'Digital Door Lock - Philips 609', price: 13900 }
+        ];
+
+        let doorItems = [
+            { 
+                id: Date.now(), category: 'complete', type: 'single', pattern: 'plain', size: '80x200', color: 'Pure White', qty: 1, installPrice: 0, 
+                addFrame: false, frameType: 'frameSynthStd', frameSize: '80x200', frameColor: 'White', frameQty: 1, frameInstallPrice: 0,
+                addOns: [] 
+            }
+        ];
+
+        function addDoorItemUI() {
+            doorItems.push({ 
+                id: Date.now(), category: 'complete', type: 'single', pattern: 'plain', size: '80x200', color: 'Pure White', qty: 1, installPrice: 0, 
+                addFrame: false, frameType: 'frameSynthStd', frameSize: '80x200', frameColor: 'White', frameQty: 1, frameInstallPrice: 0,
+                addOns: [] 
+            });
+            renderDoorsUI();
+            calculateDoor();
+        }
+
+        function removeDoorItemUI(id) {
+            doorItems = doorItems.filter(d => d.id !== id);
+            if(doorItems.length === 0) addDoorItemUI();
+            else { renderDoorsUI(); calculateDoor(); }
+        }
+
+        function addAddOnItem(doorId) {
+            const door = doorItems.find(d => d.id === doorId);
+            if(door) {
+                if(!door.addOns) door.addOns = [];
+                const defaultKey = (door.category === 'complete') ? 'digital_secuon' : 'lwKnob_general';
+                door.addOns.push({ key: defaultKey, qty: 1 });
+                renderDoorsUI();
+                calculateDoor();
+            }
+        }
+
+        function removeAddOnItem(doorId, index) {
+            const door = doorItems.find(d => d.id === doorId);
+            if(door && door.addOns) {
+                door.addOns.splice(index, 1);
+                renderDoorsUI();
+                calculateDoor();
+            }
+        }
+
+        function updateAddOnField(doorId, index, field, value) {
+            const door = doorItems.find(d => d.id === doorId);
+            if(door && door.addOns && door.addOns[index]) {
+                if(field === 'qty') door.addOns[index].qty = parseInt(value) || 1;
+                else if(field === 'key') door.addOns[index].key = value;
+                calculateDoor();
+            }
+        }
+
+        function updateDoorField(id, field, value) {
+            const door = doorItems.find(d => d.id === id);
+            if(door) {
+                if(field === 'qty' || field === 'frameQty') door[field] = parseInt(value) || 0;
+                else if (field === 'installPrice' || field === 'frameInstallPrice') door[field] = value === '' ? 0 : parseFloat(value);
+                else if (field === 'addFrame') door[field] = value;
+                else door[field] = value;
+                
+                if (field === 'category') {
+                    if (!doorConfig.categories[door.category]) {
+                        door.category = 'complete';
+                    }
+                    if (door.category === 'frames') {
+                        door.type = 'frameSynthCasing';
+                        door.pattern = 'standard';
+                        door.size = '80x200';
+                        const sizeObj = doorConfig.categories.frames.types[door.type].patterns[door.pattern].sizes[door.size];
+                        door.color = sizeObj.colors[0] || '';
+                    } else if (door.category === 'hardware') {
+                        door.type = 'lwKnob';
+                        door.pattern = 'toilet';
+                        door.size = 'standard';
+                        door.color = '';
+                    } else {
+                        const catObj = doorConfig.categories[door.category];
+                        door.type = Object.keys(catObj.types)[0];
+                        const typeObj = catObj.types[door.type];
+                        door.pattern = Object.keys(typeObj.patterns)[0];
+                        const patternObj = typeObj.patterns[door.pattern];
+                        door.size = Object.keys(patternObj.sizes)[0];
+                        door.color = patternObj.sizes[door.size].colors[0] || '';
+                    }
+                    door.addOns = [];
+                } else if (field === 'type' || field === 'pattern') {
+                    if (door.category === 'frames') {
+                        const typeObj = doorConfig.categories.frames.types[door.type];
+                        if (!typeObj) door.type = 'frameSynthCasing';
+                        door.pattern = 'standard';
+                        const sizeObj = typeObj.patterns.standard.sizes[door.size] || typeObj.patterns.standard.sizes['80x200'];
+                        if(!typeObj.patterns.standard.sizes[door.size]) {
+                            door.size = Object.keys(typeObj.patterns.standard.sizes)[0];
+                        }
+                        door.color = typeObj.patterns.standard.sizes[door.size].colors[0] || '';
+                    } else if (door.category === 'hardware') {
+                        const typeObj = doorConfig.categories.hardware.types[door.type];
+                        if (!typeObj) door.type = 'lwKnob';
+                        if (!typeObj.patterns[door.pattern]) {
+                            door.pattern = Object.keys(typeObj.patterns)[0];
+                        }
+                        door.size = 'standard';
+                        door.color = '';
+                    } else {
+                        const catObj = doorConfig.categories[door.category] || doorConfig.categories['complete'];
+                        if (!catObj.types[door.type]) {
+                            door.type = Object.keys(catObj.types)[0];
+                        }
+                        const typeObj = catObj.types[door.type];
+                        if (!typeObj.patterns[door.pattern]) {
+                            door.pattern = Object.keys(typeObj.patterns)[0];
+                        }
+                        const patternObj = typeObj.patterns[door.pattern];
+                        if (!patternObj.sizes[door.size]) {
+                            door.size = Object.keys(patternObj.sizes)[0];
+                        }
+                        door.color = patternObj.sizes[door.size].colors[0] || '';
+                    }
+                } else if (field === 'size') {
+                    if (door.category === 'frames') {
+                        const typeObj = doorConfig.categories.frames.types[door.type];
+                        if(typeObj.patterns.standard.sizes[value]) {
+                            door.size = value;
+                            door.color = typeObj.patterns.standard.sizes[value].colors[0] || '';
+                        }
+                    } else if (door.category === 'hardware') {
+                        door.size = 'standard';
+                    } else {
+                        const catObj = doorConfig.categories[door.category] || doorConfig.categories['complete'];
+                        const typeObj = catObj.types[door.type] || catObj.types[Object.keys(catObj.types)[0]];
+                        const patternObj = typeObj.patterns[door.pattern] || typeObj.patterns[Object.keys(typeObj.patterns)[0]];
+                        if (patternObj.sizes[value]) {
+                            door.size = value;
+                            door.color = patternObj.sizes[value].colors[0] || '';
+                        } else {
+                            door.size = Object.keys(patternObj.sizes)[0];
+                            door.color = patternObj.sizes[door.size].colors[0] || '';
+                        }
+                    }
+                } else if (field === 'frameType' || field === 'frameSize') {
+                    const framesCat = doorConfig.categories.frames;
+                    if (!framesCat.types[door.frameType]) {
+                        door.frameType = 'frameSynthStd';
+                    }
+                    const fTypeObj = framesCat.types[door.frameType];
+                    if (!fTypeObj.patterns.standard.sizes[door.frameSize]) {
+                        door.frameSize = Object.keys(fTypeObj.patterns.standard.sizes)[0];
+                    }
+                    door.frameColor = fTypeObj.patterns.standard.sizes[door.frameSize].colors[0] || '';
+                }
+
+                renderDoorsUI();
+            }
+            calculateDoor();
+        }
+
+        function renderDoorsUI() {
+            const container = document.getElementById('doorListContainer');
+            if(!container) return;
+            container.innerHTML = '';
+            
+            doorItems.forEach((door, index) => {
+                if (!doorConfig.categories[door.category]) door.category = 'complete';
+                const isFrame = door.category === 'frames';
+                const isHardware = door.category === 'hardware';
+                const isComplete = door.category === 'complete';
+                const isSlabOrUdoor = (door.category === 'slab' || door.category === 'udoor');
+                
+                let catOptionsHTML = `
+                    <option value="complete" ${door.category === 'complete' ? 'selected' : ''}>🚪 1. ประตูเหล็ก ครบชุด</option>
+                    <option value="slab" ${door.category === 'slab' ? 'selected' : ''}>🚪 2. ประตูเหล็ก เฉพาะบาน</option>
+                    <option value="udoor" ${door.category === 'udoor' ? 'selected' : ''}>🚪 3. ประตู Udoor</option>
+                    <option value="frames" ${door.category === 'frames' ? 'selected' : ''}>🪵 4. วงกบ</option>
+                    <option value="hardware" ${door.category === 'hardware' ? 'selected' : ''}>🔒 5. ลูกบิด</option>
+                `;
+
+                let typeOptionsHTML = '';
+                let patternOptionsHTML = '';
+                let sizeOptionsHTML = '';
+                let colorOptionsHTML = '';
+                let sizeObj = null;
+
+                if (isFrame) {
+                    let frameTypes = doorConfig.categories.frames.types;
+                    for(let ftKey in frameTypes) {
+                        typeOptionsHTML += `<option value="${ftKey}" ${door.type === ftKey ? 'selected' : ''}>${frameTypes[ftKey].label}</option>`;
+                    }
+                    if(!frameTypes[door.type]) door.type = 'frameSynthCasing';
+                    const fTypeObj = frameTypes[door.type];
+                    for(let fsKey in fTypeObj.patterns.standard.sizes) {
+                        sizeOptionsHTML += `<option value="${fsKey}" ${door.size === fsKey ? 'selected' : ''}>${fsKey}</option>`;
+                    }
+                    if(!fTypeObj.patterns.standard.sizes[door.size]) door.size = Object.keys(fTypeObj.patterns.standard.sizes)[0];
+                    sizeObj = fTypeObj.patterns.standard.sizes[door.size];
+                    sizeObj.colors.forEach(c => {
+                        colorOptionsHTML += `<option value="${c}" ${door.color === c ? 'selected' : ''}>${c}</option>`;
+                    });
+                } else if (isHardware) {
+                    let hwTypes = doorConfig.categories.hardware.types;
+                    for(let htKey in hwTypes) {
+                        typeOptionsHTML += `<option value="${htKey}" ${door.type === htKey ? 'selected' : ''}>${hwTypes[htKey].label}</option>`;
+                    }
+                    if(!hwTypes[door.type]) door.type = 'lwKnob';
+                    const hTypeObj = hwTypes[door.type];
+                    for(let hpKey in hTypeObj.patterns) {
+                        patternOptionsHTML += `<option value="${hpKey}" ${door.pattern === hpKey ? 'selected' : ''}>${hTypeObj.patterns[hpKey].label}</option>`;
+                    }
+                    if(!hTypeObj.patterns[door.pattern]) door.pattern = Object.keys(hTypeObj.patterns)[0];
+                    const hPatternObj = hTypeObj.patterns[door.pattern];
+                    sizeObj = hPatternObj.sizes['standard'] || Object.values(hPatternObj.sizes)[0];
+                } else {
+                    const catObj = doorConfig.categories[door.category];
+                    for(let tKey in catObj.types) {
+                        typeOptionsHTML += `<option value="${tKey}" ${door.type === tKey ? 'selected' : ''}>${catObj.types[tKey].label}</option>`;
+                    }
+                    if(!catObj.types[door.type]) door.type = Object.keys(catObj.types)[0];
+                    const typeObj = catObj.types[door.type];
+
+                    for(let pKey in typeObj.patterns) {
+                        patternOptionsHTML += `<option value="${pKey}" ${door.pattern === pKey ? 'selected' : ''}>${typeObj.patterns[pKey].label}</option>`;
+                    }
+                    if(!typeObj.patterns[door.pattern]) door.pattern = Object.keys(typeObj.patterns)[0];
+                    const patternObj = typeObj.patterns[door.pattern];
+
+                    for(let sKey in patternObj.sizes) {
+                        sizeOptionsHTML += `<option value="${sKey}" ${door.size === sKey ? 'selected' : ''}>${sKey}</option>`;
+                    }
+                    if(!patternObj.sizes[door.size]) door.size = Object.keys(patternObj.sizes)[0];
+                    sizeObj = patternObj.sizes[door.size];
+
+                    sizeObj.colors.forEach(c => {
+                        colorOptionsHTML += `<option value="${c}" ${door.color === c ? 'selected' : ''}>${c}</option>`;
+                    });
+                }
+
+                const currentPrice = sizeObj.price;
+                const canAddFrame = isSlabOrUdoor;
+
+                let frameAddonHTML = '';
+                if (canAddFrame) {
+                    const framesCat = doorConfig.categories.frames;
+                    let fTypeOpts = '';
+                    for(let ftK in framesCat.types) {
+                        fTypeOpts += `<option value="${ftK}" ${door.frameType === ftK ? 'selected' : ''}>${framesCat.types[ftK].label}</option>`;
+                    }
+                    if(!framesCat.types[door.frameType]) door.frameType = 'frameSynthStd';
+                    const curFTypeObj = framesCat.types[door.frameType];
+
+                    let fSizeOpts = '';
+                    for(let fsK in curFTypeObj.patterns.standard.sizes) {
+                        fSizeOpts += `<option value="${fsK}" ${door.frameSize === fsK ? 'selected' : ''}>${fsK}</option>`;
+                    }
+                    if(!curFTypeObj.patterns.standard.sizes[door.frameSize]) door.frameSize = Object.keys(curFTypeObj.patterns.standard.sizes)[0];
+                    const curFSizeObj = curFTypeObj.patterns.standard.sizes[door.frameSize];
+
+                    let fColorOpts = '';
+                    curFSizeObj.colors.forEach(fc => {
+                        fColorOpts += `<option value="${fc}" ${door.frameColor === fc ? 'selected' : ''}>${fc}</option>`;
+                    });
+
+                    frameAddonHTML = `
+                        <div class="mt-4 pt-4 border-t border-dashed border-gray-200 dark:border-gray-700 bg-emerald-50/50 dark:bg-gray-900/40 p-4 rounded-2xl space-y-3">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <input type="checkbox" id="addFrame_${door.id}" ${door.addFrame ? 'checked' : ''} onchange="updateDoorField(${door.id}, 'addFrame', this.checked)" class="w-4 h-4 text-green-600 rounded border-gray-300 focus:ring-green-500 cursor-pointer">
+                                    <label for="addFrame_${door.id}" class="text-xs font-bold text-green-900 dark:text-green-300 cursor-pointer">➕ เพิ่มสั่งซื้อวงกบร่วมด้วย (Add-on Frame)</label>
+                                </div>
+                                <span class="text-xs font-extrabold text-green-700 dark:text-green-400">${door.addFrame ? formatMoney(curFSizeObj.price) + '.- / ชุด' : ''}</span>
+                            </div>
+
+                            <div id="frameDetails_${door.id}" class="${door.addFrame ? 'grid' : 'hidden'} grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 pt-2">
+                                <div class="space-y-1">
+                                    <label class="block text-[10px] font-semibold text-gray-600 dark:text-gray-400 uppercase">ประเภทวงกบ</label>
+                                    <select onchange="updateDoorField(${door.id}, 'frameType', this.value)" class="w-full px-3 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-xs font-medium text-gray-800 dark:text-gray-100 outline-none shadow-inner">
+                                        ${fTypeOpts}
+                                    </select>
+                                </div>
+                                <div class="space-y-1">
+                                    <label class="block text-[10px] font-semibold text-gray-600 dark:text-gray-400 uppercase">ขนาดวงกบ (ซม.)</label>
+                                    <select onchange="updateDoorField(${door.id}, 'frameSize', this.value)" class="w-full px-3 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-xs font-medium text-gray-800 dark:text-gray-100 outline-none shadow-inner">
+                                        ${fSizeOpts}
+                                    </select>
+                                </div>
+                                <div class="space-y-1">
+                                    <label class="block text-[10px] font-semibold text-gray-600 dark:text-gray-400 uppercase">สีวงกบ</label>
+                                    <select onchange="updateDoorField(${door.id}, 'frameColor', this.value)" class="w-full px-3 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-xs font-medium text-gray-800 dark:text-gray-100 outline-none shadow-inner">
+                                        ${fColorOpts}
+                                    </select>
+                                </div>
+                                <div class="space-y-1">
+                                    <label class="block text-[10px] font-semibold text-gray-600 dark:text-gray-400 uppercase">ค่าจัดส่งวงกบเพิ่ม (บาท)</label>
+                                    <input type="number" oninput="updateDoorField(${door.id}, 'frameInstallPrice', this.value)" value="${door.frameInstallPrice || ''}" min="0" placeholder="0" class="w-full px-3 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-xs font-medium text-gray-800 dark:text-gray-100 outline-none shadow-inner">
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                // Add-on Hardware / Locks / Digital Door Lock section
+                let addOnsHTML = '';
+                if (isSlabOrUdoor || isComplete) {
+                    let filteredCatalog = hardwareCatalog;
+                    if (isComplete) {
+                        filteredCatalog = hardwareCatalog.filter(h => h.key === 'digital_secuon' || h.key === 'digital_philips');
+                    }
+
+                    let addOnsRows = '';
+                    if (door.addOns && door.addOns.length > 0) {
+                        door.addOns.forEach((ao, aoIdx) => {
+                            let optionsHTML = '';
+                            filteredCatalog.forEach(item => {
+                                optionsHTML += `<option value="${item.key}" ${ao.key === item.key ? 'selected' : ''}>${item.label} (${formatMoney(item.price)}.-)</option>`;
+                            });
+                            addOnsRows += `
+                                <div class="flex items-center gap-2 bg-white dark:bg-gray-800 p-2.5 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm">
+                                    <select onchange="updateAddOnField(${door.id}, ${aoIdx}, 'key', this.value)" class="flex-1 px-3 py-2 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl text-xs font-medium text-gray-800 dark:text-gray-100 outline-none shadow-inner">
+                                        ${optionsHTML}
+                                    </select>
+                                    <div class="flex items-center gap-1.5">
+                                        <span class="text-[11px] text-gray-500">จำนวน</span>
+                                        <input type="number" value="${ao.qty}" min="1" oninput="updateAddOnField(${door.id}, ${aoIdx}, 'qty', this.value)" class="w-14 px-2 py-2 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl text-center text-xs font-semibold text-gray-800 dark:text-gray-100 outline-none shadow-inner">
+                                    </div>
+                                    <button onclick="removeAddOnItem(${door.id}, ${aoIdx})" class="text-red-400 hover:text-red-600 p-1.5 cursor-pointer bg-red-50 dark:bg-red-900/30 rounded-xl" title="ลบรายการ">
+                                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                                    </button>
+                                </div>
+                            `;
+                        });
+                    }
+
+                    const addOnTitleText = isComplete ? '➕ เพิ่มสั่งซื้อ Digital Door Lock ร่วมด้วย' : '➕ เพิ่มสั่งซื้อลูกบิด/อุปกรณ์เสริมร่วมด้วย (Add-on Hardware)';
+                    addOnsHTML = `
+                        <div class="mt-4 pt-4 border-t border-dashed border-gray-200 dark:border-gray-700 bg-amber-50/50 dark:bg-gray-900/40 p-4 rounded-2xl space-y-3">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-bold text-amber-900 dark:text-amber-300">${addOnTitleText}</span>
+                                <button onclick="addAddOnItem(${door.id})" class="px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-xs font-medium transition cursor-pointer flex items-center gap-1 shadow-sm">
+                                    <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                                    เพิ่มรายการ
+                                </button>
+                            </div>
+                            <div class="space-y-2">
+                                ${addOnsRows}
+                            </div>
+                        </div>
+                    `;
+                }
+
+                const serviceInputLabel = isFrame ? 'ค่าจัดส่ง (บาท)' : (isHardware ? 'ค่าจัดส่ง (บาท)' : 'ค่าบริการติดตั้ง (บาท)');
+                const itemTypeNameLabel = isFrame ? 'ประเภทวงกบ' : (isHardware ? 'รายการสินค้า' : 'รุ่น / ประเภท');
+                
+                let gridColsClass = "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-3";
+                let sizeColClass = "space-y-1.5";
+                let colorContainerHTML = `
+                    <div class="space-y-1.5">
+                        <label class="block text-[11px] font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">สี (${sizeObj.colors.length} สี)</label>
+                        <select onchange="updateDoorField(${door.id}, 'color', this.value)" class="w-full px-3.5 py-2.5 bg-gray-50/50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl focus:ring-2 focus:ring-green-500 outline-none text-xs font-medium text-gray-800 dark:text-gray-100 cursor-pointer shadow-sm">
+                            ${colorOptionsHTML}
+                        </select>
+                    </div>
+                `;
+
+                if (isHardware) {
+                    gridColsClass = "grid grid-cols-1 sm:grid-cols-3 gap-3";
+                    sizeColClass = "hidden";
+                    colorContainerHTML = "";
+                } else if (isFrame) {
+                    gridColsClass = "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3";
+                }
+
+                const div = document.createElement('div');
+                div.className = "bg-white dark:bg-gray-800 p-5 rounded-3xl border border-gray-200 dark:border-gray-700 shadow-sm relative space-y-4 transition-all";
+                div.innerHTML = `
+                    <div class="flex justify-between items-center border-b border-gray-100 dark:border-gray-700 pb-3">
+                        <span class="text-xs font-bold text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-900/40 px-3 py-1 rounded-xl border border-green-100 dark:border-green-800">รายการที่ ${index + 1} (${isFrame ? 'วงกบ' : (isHardware ? 'ลูกบิด' : 'ประตู')})</span>
+                        ${doorItems.length > 1 ? `<button onclick="removeDoorItemUI(${door.id})" class="text-red-400 hover:text-red-600 bg-red-50 dark:bg-red-900/30 p-2 rounded-xl cursor-pointer transition shadow-sm" title="ลบรายการนี้"><svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></button>` : ''}
+                    </div>
+
+                    <div class="${gridColsClass}">
+                        <div class="space-y-1.5">
+                            <label class="block text-[11px] font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">หมวดหมู่หลัก</label>
+                            <select onchange="updateDoorField(${door.id}, 'category', this.value)" class="w-full px-3.5 py-2.5 bg-gray-50/50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl focus:ring-2 focus:ring-green-500 outline-none text-xs font-medium text-gray-800 dark:text-gray-100 cursor-pointer shadow-sm">
+                                ${catOptionsHTML}
+                            </select>
+                        </div>
+
+                        <div class="space-y-1.5">
+                            <label class="block text-[11px] font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">${itemTypeNameLabel}</label>
+                            <select onchange="updateDoorField(${door.id}, 'type', this.value)" class="w-full px-3.5 py-2.5 bg-gray-50/50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl focus:ring-2 focus:ring-green-500 outline-none text-xs font-medium text-gray-800 dark:text-gray-100 cursor-pointer shadow-sm">
+                                ${typeOptionsHTML}
+                            </select>
+                        </div>
+                        
+                        <div class="space-y-1.5 ${isFrame || patternOptionsHTML === '' ? 'hidden' : ''}">
+                            <label class="block text-[11px] font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">${isHardware ? 'ประเภทการใช้งาน' : 'ลวดลาย'}</label>
+                            <select onchange="updateDoorField(${door.id}, 'pattern', this.value)" class="w-full px-3.5 py-2.5 bg-gray-50/50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl focus:ring-2 focus:ring-green-500 outline-none text-xs font-medium text-gray-800 dark:text-gray-100 cursor-pointer shadow-sm">
+                                ${patternOptionsHTML}
+                            </select>
+                        </div>
+
+                        <div class="${sizeColClass}">
+                            <label class="block text-[11px] font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">ขนาด (ซม.)</label>
+                            <select onchange="updateDoorField(${door.id}, 'size', this.value)" class="w-full px-3.5 py-2.5 bg-gray-50/50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl focus:ring-2 focus:ring-green-500 outline-none text-xs font-medium text-gray-800 dark:text-gray-100 cursor-pointer shadow-sm">
+                                ${sizeOptionsHTML}
+                            </select>
+                        </div>
+
+                        ${colorContainerHTML}
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 items-end mt-4 pt-4 border-t border-gray-100 dark:border-gray-700">
+                        <div class="bg-green-50 dark:bg-gray-900 px-4 py-3 rounded-2xl border border-green-100 dark:border-gray-700 flex flex-col justify-center shadow-inner">
+                            <span class="text-[10px] text-green-600 dark:text-green-400 font-bold uppercase">ราคาต่อชิ้น</span>
+                            <span class="text-sm font-extrabold text-green-800 dark:text-green-300">${formatMoney(currentPrice)}.-</span>
+                        </div>
+                        <div class="space-y-1.5">
+                            <label class="block text-[11px] font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">จำนวน (ชุด/ชิ้น)</label>
+                            <input type="number" oninput="updateDoorField(${door.id}, 'qty', this.value)" value="${door.qty}" min="1" class="w-full px-3.5 py-2.5 bg-gray-50/50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl focus:ring-2 focus:ring-green-500 outline-none text-xs font-medium text-gray-800 dark:text-gray-100 shadow-sm">
+                        </div>
+                        <div class="space-y-1.5">
+                            <label class="block text-[11px] font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">${serviceInputLabel}</label>
+                            <input type="number" oninput="updateDoorField(${door.id}, 'installPrice', this.value)" value="${door.installPrice || ''}" min="0" placeholder="ระบุจำนวนเงิน" class="w-full px-3.5 py-2.5 bg-gray-50/50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl focus:ring-2 focus:ring-green-500 outline-none text-xs font-medium text-gray-800 dark:text-gray-100 shadow-sm">
+                        </div>
+                    </div>
+
+                    ${frameAddonHTML}
+                    ${addOnsHTML}
+                `;
+                container.appendChild(div);
+            });
+        }
+
         let currentCalcData = null;
 
-        function calculate() {
+        function calculateDoor() {
+            const outputBox = document.getElementById('outputText');
+
+            if (doorItems.length === 0 || doorItems.every(d => d.qty <= 0)) {
+                outputBox.value = "💡 กรุณาระบุจำนวนรายการสินค้าเพื่อเริ่มต้นคำนวณราคาครับ";
+                currentCalcData = null;
+                return;
+            }
+
+            let totalDoorPrice = 0;
+            let totalInstallPrice = 0;
+            let totalQty = 0;
+            let doorDetailsForOutput = [];
+            let receiptItems = {};
+            let itemIndex = 1;
+
+            doorItems.forEach(door => {
+                if(door.qty > 0) {
+                    if (!doorConfig.categories[door.category]) door.category = 'complete';
+                    const isFrame = door.category === 'frames';
+                    const isHardware = door.category === 'hardware';
+                    let unitPrice = 0;
+                    let catLabel = '';
+                    let typeLabel = '';
+                    let patternLabel = '';
+                    let sizeLabel = '';
+                    let sizeObj = null;
+
+                    if (isFrame) {
+                        const frameTypes = doorConfig.categories.frames.types;
+                        if(!frameTypes[door.type]) door.type = 'frameSynthCasing';
+                        const fTypeObj = frameTypes[door.type];
+                        if(!fTypeObj.patterns.standard.sizes[door.size]) door.size = '80x200';
+                        sizeObj = fTypeObj.patterns.standard.sizes[door.size];
+                        unitPrice = sizeObj.price;
+                        catLabel = '🪵 วงกบ';
+                        typeLabel = fTypeObj.label;
+                        sizeLabel = ` ขนาด ${door.size}`;
+                    } else if (isHardware) {
+                        const hwTypes = doorConfig.categories.hardware.types;
+                        if(!hwTypes[door.type]) door.type = 'lwKnob';
+                        const hTypeObj = hwTypes[door.type];
+                        typeLabel = hTypeObj.label;
+                        const hPatternObj = hTypeObj.patterns[door.pattern] || Object.values(hTypeObj.patterns)[0];
+                        patternLabel = Object.keys(hTypeObj.patterns).length > 1 ? `(${hPatternObj.label})` : '';
+                        sizeObj = hPatternObj.sizes['standard'] || Object.values(hPatternObj.sizes)[0];
+                        unitPrice = sizeObj.price;
+                        catLabel = '🔒 ลูกบิด';
+                        sizeLabel = '';
+                    } else {
+                        const catObj = doorConfig.categories[door.category];
+                        catLabel = catObj.label;
+                        if(!catObj.types[door.type]) door.type = Object.keys(catObj.types)[0];
+                        const typeObj = catObj.types[door.type];
+                        typeLabel = typeObj.label;
+                        if(!typeObj.patterns[door.pattern]) door.pattern = Object.keys(typeObj.patterns)[0];
+                        const patternObj = typeObj.patterns[door.pattern];
+                        patternLabel = Object.keys(typeObj.patterns).length > 1 ? patternObj.label : '';
+                        if(!patternObj.sizes[door.size]) door.size = Object.keys(patternObj.sizes)[0];
+                        sizeObj = patternObj.sizes[door.size];
+                        unitPrice = sizeObj.price;
+                        sizeLabel = ` ขนาด ${door.size}`;
+                    }
+                    
+                    const itemDoorTotal = door.qty * unitPrice;
+                    const itemInstallTotal = door.installPrice || 0;
+                    
+                    totalDoorPrice += itemDoorTotal;
+                    totalInstallPrice += itemInstallTotal;
+                    totalQty += door.qty;
+
+                    const colorTextStr = (door.color && !isHardware) ? ` (สี ${door.color})` : '';
+                    let detailsStr = `รายการที่ ${itemIndex}: ${catLabel} - ${typeLabel} ${patternLabel}${sizeLabel}${colorTextStr}\n`;
+                    detailsStr += `👉 จำนวน: ${door.qty} ชิ้น/ชุด (${formatMoney(unitPrice)}.-) = ${formatMoney(itemDoorTotal)} บาท`;
+                    if(door.installPrice > 0) {
+                        const serviceLabelText = (isFrame || isHardware) ? '📦 ค่าจัดส่ง' : '🛠️ ค่าติดตั้ง';
+                        detailsStr += `\n${serviceLabelText}: ${formatMoney(door.installPrice)} บาท`;
+                    }
+
+                    receiptItems[`door_${door.id}`] = {
+                        label: `${typeLabel} ${patternLabel}${sizeLabel}${colorTextStr}`,
+                        qty: door.qty, unit: isHardware ? 'ชิ้น' : 'ชุด', unitPrice: unitPrice, price: itemDoorTotal
+                    };
+                    if(door.installPrice > 0) {
+                        receiptItems[`install_${door.id}`] = {
+                            label: (isFrame || isHardware) ? `ค่าจัดส่ง` : `ค่าบริการติดตั้ง`,
+                            qty: 1, unit: 'รายการ', unitPrice: door.installPrice, price: itemInstallTotal
+                        };
+                    }
+
+                    // Add-on Frame handling
+                    if ((door.category === 'slab' || door.category === 'udoor') && door.addFrame) {
+                        const framesCat = doorConfig.categories.frames;
+                        if(!framesCat.types[door.frameType]) door.frameType = 'frameSynthStd';
+                        const fTypeObj = framesCat.types[door.frameType];
+                        if(!fTypeObj.patterns.standard.sizes[door.frameSize]) door.frameSize = Object.keys(fTypeObj.patterns.standard.sizes)[0];
+                        const fSizeObj = fTypeObj.patterns.standard.sizes[door.frameSize];
+                        
+                        const frameUnitPrice = fSizeObj.price;
+                        const frameQty = door.qty;
+                        const frameTotal = frameQty * frameUnitPrice;
+                        const frameInstallTotal = door.frameInstallPrice || 0;
+
+                        totalDoorPrice += frameTotal;
+                        totalInstallPrice += frameInstallTotal;
+
+                        detailsStr += `\n   ➕ [Add-on วงกบ] ${fTypeObj.label} ขนาด ${door.frameSize} (สี ${door.frameColor}) x${frameQty} = ${formatMoney(frameTotal)} บาท`;
+                        if(door.frameInstallPrice > 0) {
+                            detailsStr += `\n   📦 ค่าจัดส่งวงกบเพิ่ม: ${formatMoney(door.frameInstallPrice)} บาท`;
+                        }
+
+                        receiptItems[`addon_frame_${door.id}`] = {
+                            label: `[Add-on] วงกบ ${fTypeObj.label} ${door.frameSize} (${door.frameColor})`,
+                            qty: frameQty, unit: 'ชิ้น', unitPrice: frameUnitPrice, price: frameTotal
+                        };
+                        if(door.frameInstallPrice > 0) {
+                            receiptItems[`addon_frame_install_${door.id}`] = {
+                                label: `ค่าจัดส่งวงกบ (Add-on)`,
+                                qty: 1, unit: 'รายการ', unitPrice: door.frameInstallPrice, price: frameInstallTotal
+                            };
+                        }
+                    }
+
+                    // Add-on Hardware / Locks handling
+                    if (door.addOns && door.addOns.length > 0) {
+                        door.addOns.forEach((ao, aoIdx) => {
+                            const catalogItem = hardwareCatalog.find(h => h.key === ao.key);
+                            if (catalogItem) {
+                                const aoTotal = catalogItem.price * ao.qty;
+                                totalDoorPrice += aoTotal;
+
+                                detailsStr += `\n   ➕ [Add-on ฮาร์ดแวร์] ${catalogItem.label} x${ao.qty} = ${formatMoney(aoTotal)} บาท`;
+
+                                receiptItems[`addon_hw_${door.id}_${aoIdx}`] = {
+                                    label: `[Add-on] ${catalogItem.label}`,
+                                    qty: ao.qty, unit: 'ชิ้น', unitPrice: catalogItem.price, price: aoTotal
+                                };
+                            }
+                        });
+                    }
+
+                    doorDetailsForOutput.push(detailsStr);
+                    itemIndex++;
+                }
+            });
+
+            let subtotalBeforeDiscount = totalDoorPrice + totalInstallPrice;
+            let discountAmount = 0;
+            let discountText = "";
+
+            if (document.getElementById('isDoorPromo').checked) {
+                const promoType = document.getElementById('doorPromoType').value;
+                const promoVal = parseFloat(document.getElementById('doorPromoValue').value) || 0;
+                if (promoVal > 0) {
+                    if (promoType === 'percent') {
+                        discountAmount = subtotalBeforeDiscount * (promoVal / 100);
+                        discountText = `🏷️ ส่วนลดโปรโมชั่น (${promoVal}%) = -${formatMoney(discountAmount)} บาท\n`;
+                    } else {
+                        discountAmount = Math.min(promoVal, subtotalBeforeDiscount);
+                        discountText = `🏷️ ส่วนลดโปรโมชั่นพิเศษ = -${formatMoney(discountAmount)} บาท\n`;
+                    }
+                }
+            }
+
+            const grandTotal = Math.max(0, subtotalBeforeDiscount - discountAmount);
+
+            if (discountAmount > 0) {
+                receiptItems['door_discount'] = {
+                    label: `ส่วนลดโปรโมชั่นพิเศษ`,
+                    qty: 1, unit: 'รายการ', unitPrice: -discountAmount, price: -discountAmount
+                };
+            }
+
+            currentCalcData = {
+                mode: 'door',
+                productName: `ประตู วงกบ และลูกบิด (${doorItems.length} รายการ)`,
+                pattern: `รวม ${totalQty} ชิ้น/ชุด`,
+                sqmPerBox: 1,
+                area: totalQty,
+                wastePercent: 0,
+                areaWithWaste: totalQty,
+                boxesNeeded: totalQty,
+                pricePerBox: 0,
+                totalWoodPrice: totalDoorPrice,
+                accessories: receiptItems,
+                totalAccessories: totalInstallPrice, 
+                grandTotal: grandTotal
+            };
+
+            saveToHistory(currentCalcData);
+
+            const outputString = 
+`🚪🔒✨ ประเมินราคาประตู วงกบ และลูกบิด ✨🔒🚪
+
+${doorDetailsForOutput.join('\n\n')}
+
+-------------------------
+💰 ยอดรวมราคาสินค้า = ${formatMoney(totalDoorPrice)} บาท
+${totalInstallPrice > 0 ? `📦/🛠️ ยอดรวมค่าบริการ/จัดส่ง = ${formatMoney(totalInstallPrice)} บาท\n` : ''}${discountText}✨ ยอดรวมสุทธิทั้งหมด ${formatMoney(grandTotal)} บาทค่ะ ✨`;
+
+            outputBox.value = outputString;
+        }
+
+        function calculateFloor() {
             const areaInput = document.getElementById('area').value;
             const outputBox = document.getElementById('outputText');
 
             if (!areaInput || areaInput <= 0) {
-                outputBox.value = "💡 กรุณากรอกขนาดพื้นที่หน้างาน (ตร.ม.) หรืออัปโหลดแบบแปลนเพื่อเริ่มต้นคำนวณราคาครับ";
+                outputBox.value = "💡 กรุณากรอกขนาดพื้นที่หน้างาน (ตร.ม.) เพื่อเริ่มต้นคำนวณราคาครับ";
                 currentCalcData = null;
                 return;
             }
 
             const area = parseFloat(areaInput);
-            const productVal = document.getElementById('productSelect').value;
+            const sizeSelectVal = document.getElementById('sizeSelect').value;
+            const patternSelectVal = document.getElementById('patternSelect').value;
             const wastePercent = parseFloat(document.getElementById('waste').value);
             const sqmPerBox = parseFloat(document.getElementById('sqmPerBox').value) || 2.67;
 
-            const parts = productVal.split('_');
+            const parts = sizeSelectVal.split('_');
             let pricePerSqm = parseFloat(parts[0]);
             const thicknessStr = parts[1];
             const serviceType = parts[2];
-            const patternType = parts[3];
 
             if (document.getElementById('isPromo').checked) {
                 const promoVal = parseFloat(document.getElementById('promoPrice').value);
@@ -747,67 +1660,63 @@
 
             const isInstall = serviceType === 'install';
             
-            let t1Qty = 0, t2Qty = 0, t3Qty = 0, t4Qty = 0, t5Qty = 0, smallQty = 0;
-            let skirt3inQty = 0, skirt4inQty = 0;
-            let t1PriceUnit = 100, t2PriceUnit = 100, t3PriceUnit = 100, t4PriceUnit = 100, t5PriceUnit = 175, smallPriceUnit = 140;
-            let skirt3inPriceUnit = isInstall ? 15 : 135, skirt4inPriceUnit = isInstall ? 30 : 150;
+            let totalAccessories = 0;
+            let receiptItems = {};
 
             if (!isInstall) {
-                t1Qty = parseInt(document.getElementById('profileT1').value) || 0;
-                t2Qty = parseInt(document.getElementById('profileT2').value) || 0;
-                t3Qty = parseInt(document.getElementById('profileT3').value) || 0;
-                t4Qty = parseInt(document.getElementById('profileT4').value) || 0;
-                t5Qty = parseInt(document.getElementById('profileT5').value) || 0;
-                smallQty = parseInt(document.getElementById('profileSmall').value) || 0;
-            }
-            skirt3inQty = parseInt(document.getElementById('skirt3in').value) || 0;
-            skirt4inQty = parseInt(document.getElementById('skirt4in').value) || 0;
+                const pT1 = parseInt(document.getElementById('profileT1').value) || 0;
+                const pT2 = parseInt(document.getElementById('profileT2').value) || 0;
+                const pT3 = parseInt(document.getElementById('profileT3').value) || 0;
+                const pT4 = parseInt(document.getElementById('profileT4').value) || 0;
+                const pT5 = parseInt(document.getElementById('profileT5').value) || 0;
+                const pSmall = parseInt(document.getElementById('profileSmall').value) || 0;
+                
+                if (pT1 > 0) { receiptItems.t1 = { qty: pT1, unitPrice: 100, price: pT1 * 100, label: 'ตัวจบ T1', unit: 'เส้น' }; totalAccessories += pT1 * 100; }
+                if (pT2 > 0) { receiptItems.t2 = { qty: pT2, unitPrice: 100, price: pT2 * 100, label: 'ตัวจบ T2', unit: 'เส้น' }; totalAccessories += pT2 * 100; }
+                if (pT3 > 0) { receiptItems.t3 = { qty: pT3, unitPrice: 100, price: pT3 * 100, label: 'ตัวจบ T3', unit: 'เส้น' }; totalAccessories += pT3 * 100; }
+                if (pT4 > 0) { receiptItems.t4 = { qty: pT4, unitPrice: 100, price: pT4 * 100, label: 'ตัวจบ T4', unit: 'เส้น' }; totalAccessories += pT4 * 100; }
+                if (pT5 > 0) { receiptItems.t5 = { qty: pT5, unitPrice: 175, price: pT5 * 175, label: 'ตัวจบ T5', unit: 'เส้น' }; totalAccessories += pT5 * 175; }
+                if (pSmall > 0) { receiptItems.small = { qty: pSmall, unitPrice: 140, price: pSmall * 140, label: 'คิ้วเล็ก', unit: 'เส้น' }; totalAccessories += pSmall * 140; }
 
-            const totalT1 = t1Qty * t1PriceUnit;
-            const totalT2 = t2Qty * t2PriceUnit;
-            const totalT3 = t3Qty * t3PriceUnit;
-            const totalT4 = t4Qty * t4PriceUnit;
-            const totalT5 = t5Qty * t5PriceUnit;
-            const totalSmall = smallQty * smallPriceUnit;
-            const totalSkirt3 = skirt3inQty * skirt3inPriceUnit;
-            const totalSkirt4 = skirt4inQty * skirt4inPriceUnit;
+                const foamQty = parseInt(document.getElementById('foamRolls').value) || 0;
+                if(foamQty > 0) { receiptItems.foam = { qty: foamQty, unitPrice: 159, price: foamQty * 159, label: 'แผ่นโฟมรองพื้น', unit: 'ม้วน' }; totalAccessories += foamQty * 159; }
 
-            let foamQty = 0, foamPrice = 0;
-            let acrylicQty = 0, acrylicPrice = 0;
-            let nailGlueQty = 0, nailGluePrice = 0;
-            let siliconeQty = 0, siliconePrice = 0;
+                const acrylicQty = parseInt(document.getElementById('acrylicSealant').value) || 0;
+                if(acrylicQty > 0) { receiptItems.acrylic = { qty: acrylicQty, unitPrice: 80, price: acrylicQty * 80, label: 'ยาแนวอะคริลิค', unit: 'หลอด' }; totalAccessories += acrylicQty * 80; }
 
-            if (!isInstall) {
-                foamQty = parseInt(document.getElementById('foamRolls').value) || 0;
-                foamPrice = foamQty * 159;
+                const nailGlueQty = parseInt(document.getElementById('nailGlue').value) || 0;
+                if(nailGlueQty > 0) { receiptItems.nailGlue = { qty: nailGlueQty, unitPrice: 120, price: nailGlueQty * 120, label: 'กาวตะปู', unit: 'หลอด' }; totalAccessories += nailGlueQty * 120; }
 
-                acrylicQty = parseInt(document.getElementById('acrylicSealant').value) || 0;
-                acrylicPrice = acrylicQty * 80;
-
-                nailGlueQty = parseInt(document.getElementById('nailGlue').value) || 0;
-                nailGluePrice = nailGlueQty * 120;
-
-                siliconeQty = parseInt(document.getElementById('siliconeSealant').value) || 0;
-                siliconePrice = siliconeQty * 139;
+                const siliconeQty = parseInt(document.getElementById('siliconeSealant').value) || 0;
+                if(siliconeQty > 0) { receiptItems.silicone = { qty: siliconeQty, unitPrice: 139, price: siliconeQty * 139, label: 'ยาแนวซิลิโคน', unit: 'หลอด' }; totalAccessories += siliconeQty * 139; }
             }
 
-            let selfPrice = 0, selfArea = 0, selfUnitRate = 0, selfTypeName = "";
+            const skirt3inQty = parseInt(document.getElementById('skirt3in').value) || 0;
+            const skirt4inQty = parseInt(document.getElementById('skirt4in').value) || 0;
+            const skirt3inPrice = isInstall ? 15 : 135;
+            const skirt4inPrice = isInstall ? 30 : 150;
+
+            if (skirt3inQty > 0) { receiptItems.skirt3 = { qty: skirt3inQty, unitPrice: skirt3inPrice, price: skirt3inQty * skirt3inPrice, label: 'บัว 3 นิ้ว', unit: 'เส้น' }; totalAccessories += skirt3inQty * skirt3inPrice; }
+            if (skirt4inQty > 0) { receiptItems.skirt4 = { qty: skirt4inQty, unitPrice: skirt4inPrice, price: skirt4inQty * skirt4inPrice, label: 'บัว 4 นิ้ว', unit: 'เส้น' }; totalAccessories += skirt4inQty * skirt4inPrice; }
+
             const isSelf = document.getElementById('isSelfLeveling').checked;
             if (isSelf) {
-                selfArea = parseFloat(document.getElementById('selfLevelingArea').value) || area;
-                selfUnitRate = parseFloat(document.getElementById('selfLevelingType').value) || 350;
-                selfPrice = selfArea * selfUnitRate;
-                selfTypeName = selfUnitRate === 350 ? "ปรับปูนแบบบาง (ไม่เกิน 5 mm.)" : "ปรับปูนแบบบาง (ระหว่าง 5 - 10 mm.)";
+                const selfArea = parseFloat(document.getElementById('selfLevelingArea').value) || area;
+                const selfUnitRate = parseFloat(document.getElementById('selfLevelingType').value) || 350;
+                const selfPrice = selfArea * selfUnitRate;
+                const selfTypeName = selfUnitRate === 350 ? "ปรับปูนแบบบาง (ไม่เกิน 5 mm.)" : "ปรับปูนแบบบาง (ระหว่าง 5 - 10 mm.)";
+                receiptItems.selfLeveling = { qty: selfArea, unitPrice: selfUnitRate, price: selfPrice, label: selfTypeName, unit: 'ตร.ม.' };
+                totalAccessories += selfPrice;
             }
 
-            const totalAccessories = totalT1 + totalT2 + totalT3 + totalT4 + totalT5 + totalSmall + totalSkirt3 + totalSkirt4 + foamPrice + acrylicPrice + nailGluePrice + siliconePrice + selfPrice;
             const grandTotal = totalWoodPrice + totalAccessories;
 
-            const serviceLabel = serviceType === 'install' ? 'พร้อมติดตั้ง' : 'เฉพาะไม้';
+            const serviceLabel = isInstall ? 'พร้อมติดตั้ง' : 'เฉพาะไม้';
             const thicknessLabel = thicknessStr === 'ISF' ? `รุ่น ISF` : `ความหนา ${thicknessStr} มม.`;
-            const patternLabel = patternType === 'herringbone' ? "แบบปูก้างปลา" : "แบบปูตรง";
+            const patternLabel = patternSelectVal === 'herringbone' ? "แบบปูก้างปลา" : "แบบปูตรง";
 
             currentCalcData = {
+                mode: 'floor',
                 productName: `ไม้พื้น SPC ${thicknessLabel}`,
                 pattern: `${patternLabel} (${serviceLabel})`,
                 sqmPerBox: sqmPerBox,
@@ -817,45 +1726,21 @@
                 boxesNeeded: boxesNeeded,
                 pricePerBox: pricePerBox,
                 totalWoodPrice: totalWoodPrice,
-                accessories: {
-                    t1: { qty: t1Qty, unitPrice: t1PriceUnit, price: totalT1, label: 'ตัวจบ T1', unit: 'เส้น' },
-                    t2: { qty: t2Qty, unitPrice: t2PriceUnit, price: totalT2, label: 'ตัวจบ T2', unit: 'เส้น' },
-                    t3: { qty: t3Qty, unitPrice: t3PriceUnit, price: totalT3, label: 'ตัวจบ T3', unit: 'เส้น' },
-                    t4: { qty: t4Qty, unitPrice: t4PriceUnit, price: totalT4, label: 'ตัวจบ T4', unit: 'เส้น' },
-                    t5: { qty: t5Qty, unitPrice: t5PriceUnit, price: totalT5, label: 'ตัวจบ T5', unit: 'เส้น' },
-                    small: { qty: smallQty, unitPrice: smallPriceUnit, price: totalSmall, label: 'คิ้วเล็ก', unit: 'เส้น' },
-                    skirt3in: { qty: skirt3inQty, unitPrice: skirt3inPriceUnit, price: totalSkirt3, label: 'บัว 3 นิ้ว', unit: 'เส้น' },
-                    skirt4in: { qty: skirt4inQty, unitPrice: skirt4inPriceUnit, price: totalSkirt4, label: 'บัว 4 นิ้ว', unit: 'เส้น' },
-                    foam: { qty: foamQty, unitPrice: 159, price: foamPrice, label: 'แผ่นโฟมรองพื้น', unit: 'ม้วน' },
-                    acrylic: { qty: acrylicQty, unitPrice: 80, price: acrylicPrice, label: 'ยาแนวอะคริลิค', unit: 'หลอด' },
-                    nailGlue: { qty: nailGlueQty, unitPrice: 120, price: nailGluePrice, label: 'กาวตะปู', unit: 'หลอด' },
-                    silicone: { qty: siliconeQty, unitPrice: 139, price: siliconePrice, label: 'ยาแนวซิลิโคน', unit: 'หลอด' },
-                    selfLeveling: { qty: selfArea, unitPrice: selfUnitRate, price: selfPrice, label: selfTypeName, unit: 'ตร.ม.' }
-                },
+                accessories: receiptItems,
                 totalAccessories: totalAccessories,
                 grandTotal: grandTotal
             };
 
             saveToHistory(currentCalcData);
 
-            let accListArray = [];
-            if (t1Qty > 0) accListArray.push(`- ตัวจบ T1 (${t1Qty} เส้น × 100.-): ${formatMoney(totalT1)} บาท`);
-            if (t2Qty > 0) accListArray.push(`- ตัวจบ T2 (${t2Qty} เส้น × 100.-): ${formatMoney(totalT2)} บาท`);
-            if (t3Qty > 0) accListArray.push(`- ตัวจบ T3 (${t3Qty} เส้น × 100.-): ${formatMoney(totalT3)} บาท`);
-            if (t4Qty > 0) accListArray.push(`- ตัวจบ T4 (${t4Qty} เส้น × 100.-): ${formatMoney(totalT4)} บาท`);
-            if (t5Qty > 0) accListArray.push(`- ตัวจบ T5 (${t5Qty} เส้น × 175.-): ${formatMoney(totalT5)} บาท`);
-            if (smallQty > 0) accListArray.push(`- คิ้วเล็ก (${smallQty} เส้น × 140.-): ${formatMoney(totalSmall)} บาท`);
-            if (skirt3inQty > 0) accListArray.push(`- บัว 3 นิ้ว (${skirt3inQty} เส้น × ${formatMoney(skirt3inPriceUnit)}.-): ${formatMoney(totalSkirt3)} บาท`);
-            if (skirt4inQty > 0) accListArray.push(`- บัว 4 นิ้ว (${skirt4inQty} เส้น × ${formatMoney(skirt4inPriceUnit)}.-): ${formatMoney(totalSkirt4)} บาท`);
-            if (foamQty > 0) accListArray.push(`- แผ่นโฟมรองพื้น (${foamQty} ม้วน × 159.-): ${formatMoney(foamPrice)} บาท`);
-            if (acrylicQty > 0) accListArray.push(`- ยาแนวอะคริลิค (${acrylicQty} หลอด × 80.-): ${formatMoney(acrylicPrice)} บาท`);
-            if (nailGlueQty > 0) accListArray.push(`- กาวตะปู (${nailGlueQty} หลอด × 120.-): ${formatMoney(nailGluePrice)} บาท`);
-            if (siliconeQty > 0) accListArray.push(`- ยาแนวซิลิโคน (${siliconeQty} หลอด × 139.-): ${formatMoney(siliconePrice)} บาท`);
-            if (selfPrice > 0) accListArray.push(`- ${selfTypeName} (${selfArea} ตร.ม. × ${selfUnitRate}.-): ${formatMoney(selfPrice)} บาท`);
-
             let textAccSummary = "";
-            if (accListArray.length > 0) {
-                textAccSummary = `\n📦 รายการอุปกรณ์เสริมและบริการ:\n` + accListArray.join('\n') + `\n- รวมอุปกรณ์เสริมและบริการ: ${formatMoney(totalAccessories)} บาท\n`;
+            let accLines = [];
+            for (let key in receiptItems) {
+                let item = receiptItems[key];
+                accLines.push(`- ${item.label} (${item.qty} ${item.unit} × ${formatMoney(item.unitPrice)}.-) = ${formatMoney(item.price)} บาท`);
+            }
+            if (accLines.length > 0) {
+                textAccSummary = `\n📦 รายการอุปกรณ์เสริมและบริการ:\n${accLines.join('\n')}\n- รวมอุปกรณ์เสริมและบริการ = ${formatMoney(totalAccessories)} บาท\n`;
             }
 
             const outputString = 
@@ -876,19 +1761,30 @@ ${textAccSummary}
 
         function generateImage() {
             if (!currentCalcData) {
-                showToast("กรุณากรอกขนาดพื้นที่ก่อนสร้างรูปภาพ", false);
+                showToast("กรุณากรอกข้อมูลก่อนสร้างรูปภาพ", false);
                 return;
             }
 
             document.getElementById('receipt-product').innerText = currentCalcData.productName;
             document.getElementById('receipt-pattern').innerText = currentCalcData.pattern;
-            document.getElementById('receipt-sqm-box').innerText = `1 กล่องปูได้ ${formatNumber(currentCalcData.sqmPerBox)} ตร.ม.`;
-            document.getElementById('receipt-area').innerText = formatNumber(currentCalcData.area) + ' ตร.ม.';
-            document.getElementById('receipt-waste').innerText = currentCalcData.wastePercent + '%';
-            document.getElementById('receipt-total-area').innerText = formatNumber(currentCalcData.areaWithWaste) + ' ตร.ม.';
-            document.getElementById('receipt-boxes').innerText = currentCalcData.boxesNeeded + ' กล่อง';
-            document.getElementById('receipt-box-sub').innerText = `รวมไม้พื้น (${currentCalcData.boxesNeeded} กล่อง × ${formatMoney(currentCalcData.pricePerBox)}.-)`;
-            document.getElementById('receipt-box-total').innerText = formatMoney(currentCalcData.totalWoodPrice) + ' ฿';
+
+            if (currentCalcData.mode === 'door') {
+                document.getElementById('receipt-subtitle').innerText = "ใบประเมินประตูและวงกบเบื้องต้น";
+                document.getElementById('receipt-sqm-box').innerText = `ใบประเมินราคารวมหลายรายการ`;
+                document.getElementById('receipt-main-details').classList.add('hidden');
+                document.getElementById('receipt-primary-summary').classList.add('hidden');
+            } else {
+                document.getElementById('receipt-subtitle').innerText = "ใบประเมินราคาและอุปกรณ์เสริม (SPC) • Leowood Pakchong";
+                document.getElementById('receipt-main-details').classList.remove('hidden');
+                document.getElementById('receipt-primary-summary').classList.remove('hidden');
+                document.getElementById('receipt-sqm-box').innerText = `1 กล่องปูได้ ${formatNumber(currentCalcData.sqmPerBox)} ตร.ม.`;
+                document.getElementById('receipt-area').innerText = formatNumber(currentCalcData.area) + ' ตร.ม.';
+                document.getElementById('receipt-waste').innerText = currentCalcData.wastePercent + '%';
+                document.getElementById('receipt-total-area').innerText = formatNumber(currentCalcData.areaWithWaste) + ' ตร.ม.';
+                document.getElementById('receipt-boxes').innerText = `${currentCalcData.boxesNeeded} กล่อง`;
+                document.getElementById('receipt-box-sub').innerText = `รวมไม้พื้น (${currentCalcData.boxesNeeded} กล่อง × ${formatMoney(currentCalcData.pricePerBox)}.-)`;
+                document.getElementById('receipt-box-total').innerText = formatMoney(currentCalcData.totalWoodPrice) + ' ฿';
+            }
 
             const accContainer = document.getElementById('receipt-acc-items');
             accContainer.innerHTML = '';
@@ -900,7 +1796,7 @@ ${textAccSummary}
                     hasAcc = true;
                     let div = document.createElement('div');
                     div.className = 'flex justify-between items-center text-[11px]';
-                    div.innerHTML = `<span>${item.label} (${item.qty} ${item.unit} × ${formatMoney(item.unitPrice)}.-)</span><span class="font-semibold text-gray-800">${formatMoney(item.price)} ฿</span>`;
+                    div.innerHTML = `<span>${item.label} ${item.unit !== 'รายการ' ? `(${item.qty} ${item.unit} × ${formatMoney(item.unitPrice)}.-)` : ''}</span><span class="font-semibold text-gray-800">${formatMoney(item.price)} ฿</span>`;
                     accContainer.appendChild(div);
                 }
             }
@@ -908,7 +1804,15 @@ ${textAccSummary}
             const accSection = document.getElementById('receipt-acc-section');
             if (hasAcc) {
                 accSection.classList.remove('hidden');
-                document.getElementById('receipt-acc-total').innerText = formatMoney(currentCalcData.totalAccessories) + ' ฿';
+                if (currentCalcData.mode === 'door') {
+                    document.getElementById('receipt-acc-title').innerText = "รายการสินค้าและบริการเพิ่มเติม";
+                    document.getElementById('receipt-acc-total-label').innerText = "รวมราคาทั้งหมด";
+                } else {
+                    document.getElementById('receipt-acc-title').innerText = "รายการอุปกรณ์เสริมและบริการเพิ่มเติม";
+                    document.getElementById('receipt-acc-total-label').innerText = "รวมอุปกรณ์เสริมและบริการ";
+                }
+                
+                document.getElementById('receipt-acc-total').innerText = formatMoney(currentCalcData.mode === 'door' ? currentCalcData.grandTotal : currentCalcData.totalAccessories) + ' ฿';
             } else {
                 accSection.classList.add('hidden');
             }
@@ -952,7 +1856,7 @@ ${textAccSummary}
 
         function copyToClipboard() {
             const textarea = document.getElementById('outputText');
-            if(!textarea.value || textarea.value.includes("กรุณากรอกขนาดพื้นที่")) {
+            if(!textarea.value || textarea.value.includes("กรุณา")) {
                 showToast("ยังไม่มีข้อมูลให้คัดลอกครับ", false);
                 return;
             }
@@ -987,10 +1891,9 @@ ${textAccSummary}
             }, 2500);
         }
 
-        // Initialize
         updateHistoryCount();
         handleProductChange();
-        calculate();
+        calculateFloor();
     </script>
 </body>
 </html>

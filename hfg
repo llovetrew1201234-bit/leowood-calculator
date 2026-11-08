@@ -1,0 +1,105 @@
+<!doctype html><html lang="th"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Leowood | ใบเสนอราคาพื้น SPC</title>
+<style>
+:root{font-family:Tahoma,"Noto Sans Thai",sans-serif;color:#243129;background:#f4f6f2}*{box-sizing:border-box}body{margin:0}.top{background:#193e31;color:white;padding:13px max(16px,calc((100vw - 1250px)/2))}.top h1{margin:0;font-size:20px}.top p{margin:7px 0 0;color:#cbded4}.wrap{max-width:1280px;margin:14px auto;padding:0 14px;display:grid;grid-template-columns:420px minmax(0,1fr);gap:14px}.panel{background:white;border:1px solid #e0e6df;border-radius:12px;padding:16px;box-shadow:0 4px 20px #163b2310}.panel h2{margin:0 0 10px;font-size:19px}label{display:block;font-weight:bold;font-size:13px;margin-bottom:6px}.field{margin-bottom:9px}input,select,textarea{width:100%;padding:8px 10px;border:1px solid #cbd7cd;border-radius:8px;font:inherit;background:white;color:#20382b}input:focus,select:focus{outline:2px solid #83ae91}small,.muted{color:#65766a;font-size:12px}.cols{display:grid;grid-template-columns:1fr 1fr;gap:9px}.btn{border:0;background:#1d6547;color:white;padding:13px 16px;border-radius:9px;font-weight:bold;cursor:pointer;font-size:14px}.btn.alt{background:#e9f1eb;color:#1d6547}.actions{display:flex;gap:10px;flex-wrap:wrap;margin:15px 0}.total{background:#e9f3eb;padding:15px;border-radius:10px;margin-bottom:15px}.total strong{font-size:27px;color:#165638}.total span{display:block;font-size:13px;color:#536c5c}.quote{white-space:pre-wrap;line-height:1.9;font-size:14px;overflow-wrap:anywhere}.quote h3{margin:20px 0 8px}.notice{background:#fff6e6;padding:10px;border-radius:8px;font-size:12px;margin:12px 0}.switch{display:flex;align-items:center;gap:9px;margin-bottom:13px}.switch input{width:auto}.subhead{font-size:14px;color:#245e42;border-bottom:1px solid #e0e6df;padding-bottom:7px;margin:13px 0 9px}.settings{align-self:start}.install-only[hidden]{display:none!important}.mode-tabs{display:flex;gap:6px;margin-bottom:14px}.mode-tabs button{flex:1;padding:11px 6px;border-radius:9px;border:1px solid #b7cbbb;background:#f5f8f5;color:#28533b;cursor:pointer;font-weight:bold}.mode-tabs button.active{background:#1d6547;color:#fff;border-color:#1d6547}.preview{min-width:0}.trim-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:7px}.trim-grid label{font-size:12px}.trim-grid .field{min-width:0}.trim-grid input{padding:8px 5px;text-align:center}.preview .total{position:sticky;top:0;z-index:2}.quote{line-height:1.65}.field small{display:block;margin-top:3px}@media(max-width:820px){.wrap{grid-template-columns:1fr}.top{padding:22px 18px}}@media print{.top,.settings,.actions,.notice{display:none!important}.wrap{display:block;margin:0;padding:0}.panel{border:0;box-shadow:none;padding:0}.total{break-inside:avoid}.quote{font-size:12px}.preview h2{display:none}}
+</style></head><body><header class="top"><h1>LEOWOOD · ระบบใบเสนอราคาพื้น SPC</h1><p>กรอกข้อมูลหน้างาน · คำนวณราคา · คัดลอกใบเสนอราคาฉบับเต็ม</p></header>
+<main class="wrap"><section class="panel settings"><h2>ข้อมูลสำหรับคำนวณ</h2><div class="mode-tabs"><button type="button" id="modeInstalled" class="active">พร้อมติดตั้ง</button><button type="button" id="modeMaterial">เฉพาะไม้</button></div>
+<div class="cols"><div class="field"><label>พื้นที่หน้างาน (ตร.ม.)</label><input id="area" type="number" min="0" step=".01" value="0"></div><div class="field"><label>รุ่นไม้พื้น</label><select id="thickness"><option value="5">5 มม.</option><option value="6">6 มม.</option><option value="8">8 มม.</option><option value="isf">ISF</option><option value="custom">กำหนดเอง</option></select></div></div>
+<input id="saleType" type="hidden" value="installed"><div class="cols"><div class="field"><label>รูปแบบการปู</label><select id="pattern"><option value="straight">ปูตรง (+5%)</option><option value="herring">ปูก้างปลา (+18%)</option></select></div><div class="field"><label>ส่วนลด SPC (%)</label><input id="discount" type="number" min="0" max="100" step=".01" value="0"></div></div>
+<div class="cols"><div class="field"><label>ราคาปกติ / ตร.ม.</label><input id="price" type="number" min="0" step=".01" value="659"></div><div class="field"><label>พื้นที่ต่อกล่อง (ตร.ม.)</label><input id="coverage" type="number" min=".01" step=".01" value="2.67"></div></div>
+<input id="planks" type="hidden" value="12"><div class="install-only"><div class="field"><label>ตัดตีนประตู (บาน)</label><input id="doors" type="number" min="0" value="0"></div>
+</div><h3 class="subhead">บัวพื้นและตัวจบ</h3>
+<div class="cols"><div class="field"><label>ขนาดบัวพื้น</label><select id="skirting"><option value="2">2 นิ้ว</option><option value="3">3 นิ้ว</option><option value="4">4 นิ้ว</option></select></div><div class="field"><label>จำนวนบัว (เส้น)</label><input id="skirtCount" type="number" min="0" value="0"></div></div>
+<div class="muted" id="skirtHint" style="margin:-2px 0 10px">ระบบคำนวณค่าบัวให้อัตโนมัติ</div>
+<div class="install-only"><div class="cols"><div class="field"><label>ปรับปูนเซลฟ์ (ตร.ม.)</label><input id="levelArea" type="number" min="0" step=".01" value="0"></div><div class="field"><label>ความหนาปรับปูน</label><select id="levelType"><option value="350">ไม่เกิน 5 มม. (350/ตร.ม.)</option><option value="650">5–10 มม. (650/ตร.ม.)</option></select></div></div>
+<div class="cols"><div class="field"><label>ค่าบริการอื่น ๆ (บาท)</label><input id="otherCost" type="number" min="0" step=".01" value="0"></div><div class="field"><label>หักมัดจำวัดพื้นที่ (บาท)</label><input id="deposit" type="number" min="0" step=".01" value="1000"></div></div>
+<div class="field"><label>คำอธิบายค่าบริการอื่น ๆ</label><input id="otherLabel" value="ค่าบริการเพิ่มเติม"></div>
+</div><h3 class="subhead">ตัวจบและคิ้วเล็ก <small id="trimHint">(พร้อมติดตั้งฟรี)</small></h3><div class="trim-grid"><div class="field"><label>T1 (เส้น)</label><input id="trim_T1" type="number" min="0" step="1" value="0"></div><div class="field"><label>T2 (เส้น)</label><input id="trim_T2" type="number" min="0" step="1" value="0"></div><div class="field"><label>T3 (เส้น)</label><input id="trim_T3" type="number" min="0" step="1" value="0"></div><div class="field"><label>T4 (เส้น)</label><input id="trim_T4" type="number" min="0" step="1" value="0"></div><div class="field"><label>คิ้วเล็ก (เส้น)</label><input id="trim_คิ้วเล็ก" type="number" min="0" step="1" value="0"></div></div><small>ใส่จำนวนเฉพาะรายการที่ใช้ · เฉพาะไม้ 100 บาท/เส้น · พร้อมติดตั้งฟรี</small>
+<div class="install-only"><h3 class="subhead">งานรื้อถอนและบริการเพิ่มเติม</h3>
+<div class="cols"><div class="field"><label>รื้อบัวเดิม (เมตร)</label><input id="removeSkirt" type="number" min="0" step=".01" value="0"></div><div class="field"><label>ค่ารื้อบัว (บาท/เมตร)</label><input id="removeSkirtRate" type="number" value="20" min="0"></div></div>
+<div class="cols"><div class="field"><label>ประเภทพื้นเดิมที่รื้อ</label><select id="removeType"><option value="0">ไม่รื้อพื้น</option><option value="200">กระเบื้อง — 200/ตร.ม.</option><option value="80">ลามิเนต — 80/ตร.ม.</option><option value="150">กระเบื้องยางติดแน่น — 150/ตร.ม.</option><option value="80">SPC — 80/ตร.ม.</option><option value="110">ไม้จริง — เริ่ม 110/ตร.ม.</option><option value="150">ไม้กระดาน — 150/ตร.ม.</option><option value="80">พรม — เริ่ม 80/ตร.ม.</option><option value="140">สมาร์ทบอร์ด — 140/ตร.ม.</option></select></div><div class="field"><label>พื้นที่รื้อ (ตร.ม.)</label><input id="removeArea" type="number" min="0" step=".01" value="0"></div></div>
+<div class="cols"><div class="field"><label>ค่ารื้อจริง (บาท/ตร.ม.)</label><input id="removeRate" type="number" min="0" value="0"></div><div class="field"><label>ค่าย้ายเฟอร์นิเจอร์ (บาท)</label><input id="furniture" type="number" min="0" value="0"></div></div>
+<small>ไม้จริง 110–200 บาท/ตร.ม. · พรม 80–150 บาท/ตร.ม. · เฟอร์นิเจอร์ 500–2,000 บาท/งาน (ขึ้นอยู่กับหน้างาน) · เลือกราคาจริงก่อนส่งใบเสนอราคา</small>
+</div><div class="field"><label>หมายเหตุเฉพาะหน้างาน</label><textarea id="customNote" rows="3" placeholder="ระบุเพิ่มเติม (ถ้ามี)"></textarea></div>
+<div class="notice">ราคา SPC 5, 6, 8 มม. และ ISF ตั้งต้นจากข้อมูลที่ให้ไว้ (8 มม. และ ISF รองรับปูตรง) สามารถแก้ไขได้ตามราคาปัจจุบัน หากมีราคา/เงื่อนไขบัวเฉพาะรุ่นให้ปรับก่อนส่งลูกค้า</div>
+</section>
+<section class="panel preview"><h2>ตัวอย่างใบเสนอราคาฉบับเต็ม</h2><div class="total"><span>ยอดสุทธิหลังหักมัดจำ</span><strong id="net">—</strong><span id="stats"></span></div>
+<div class="actions"><button class="btn" id="copy">คัดลอกใบเสนอราคาฉบับเต็ม</button><button class="btn alt" id="print">พิมพ์ / บันทึก PDF</button></div>
+<div class="quote" id="quote"></div></section></main>
+<script>
+const $=id=>document.getElementById(id),num=id=>Math.max(0,Number($(id).value)||0),money=x=>Number(x).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}),round=x=>Math.round((x+Number.EPSILON)*100)/100;
+const presets={
+'5':{straight:{coverage:2.67,planks:12,material:459,installed:659},herring:{coverage:2.70,planks:24,material:550,installed:850}},
+'6':{straight:{coverage:2.76,planks:8,material:695,installed:895},herring:{coverage:2.25,planks:20,material:695,installed:995}},
+'8':{straight:{coverage:2.07,planks:6,material:890,installed:1110}},
+'isf':{straight:{coverage:2.20,planks:10,material:760,installed:960}}
+};
+function applyPreset(){let thick=$('thickness').value,pattern=$('pattern').value,p=presets[thick]?.[pattern];
+if(thick==='8'||thick==='isf'){$('pattern').querySelector('option[value="herring"]').disabled=true;if(pattern==='herring'){$('pattern').value='straight';p=presets[thick].straight;}}
+else $('pattern').querySelector('option[value="herring"]').disabled=false;
+
+document.querySelectorAll('.install-only').forEach(el=>el.hidden=$('saleType').value==='material');$('modeInstalled').classList.toggle('active',$('saleType').value==='installed');$('modeMaterial').classList.toggle('active',$('saleType').value==='material');$('skirtHint').textContent=$('saleType').value==='material'?'เฉพาะไม้: คิดราคาบัวเต็มจำนวน':thick==='8'?'พร้อมติดตั้ง SPC 8 มม.: ฟรีบัวทุกขนาด':'พร้อมติดตั้ง: บัว 2 นิ้วฟรี · 3 นิ้ว +15 บาท/เส้น · 4 นิ้ว +30 บาท/เส้น';$('trimHint').textContent=$('saleType').value==='material'?'(100 บาท/เส้น)':'(พร้อมติดตั้งฟรี)';
+if(p){$('price').value=p[$('saleType').value];$('coverage').value=p.coverage;$('planks').value=p.planks;}
+render();}
+['thickness','pattern','saleType'].forEach(id=>$(id).addEventListener('change',applyPreset));
+function render(){
+let area=num('area'),thick=$('thickness').value,price=num('price'),coverage=num('coverage'),planks=num('planks'),discount=Math.min(100,num('discount')),straight=$('pattern').value==='straight',waste=straight?5:18,required=round(area*(1+waste/100)),boxes=coverage?Math.ceil(area*(1+waste/100)/coverage):0;
+let discounted=round(price*(1-discount/100)),boxPrice=round(discounted*coverage),floor=round(boxes*boxPrice),doors=$('saleType').value==='installed'?num('doors'):0,doorCost=doors*500;
+let skSize=+$('skirting').value,skCount=num('skirtCount'),skMode=$('saleType').value==='material'?'full':thick==='8'?'free':'upgrade',skUnit=skMode==='free'?0:skMode==='upgrade'?Math.max(0,(skSize-2)*15):({2:120,3:135,4:150}[skSize]),skCost=skCount*skUnit;
+let levelArea=num('levelArea'),levelRate=num('levelType'),levelCost=$('saleType').value==='installed'?round(levelArea*levelRate):0,other=$('saleType').value==='installed'?num('otherCost'):0,deposit=$('saleType').value==='material'?0:num('deposit');
+let removeSkirtCost=$('saleType').value==='installed'?round(num('removeSkirt')*num('removeSkirtRate')):0,removeCost=$('saleType').value==='installed'?round(num('removeArea')*num('removeRate')):0,furnitureCost=$('saleType').value==='installed'?num('furniture'):0,minAreaCost=$('saleType').value==='installed'&&area>0&&area<20?round((20-area)*300):0;
+let trimTypes=['T1','T2','T3','T4','คิ้วเล็ก'],trimQty=trimTypes.reduce((sum,t)=>sum+num('trim_'+t),0),trimCost=$('saleType').value==='material'?trimQty*100:0;let total=round(floor+doorCost+skCost+levelCost+other+trimCost+removeSkirtCost+removeCost+furnitureCost+minAreaCost),net=round(total-deposit),lay=straight?'ตรง':'ก้างปลา',name=thick==='custom'?'กำหนดเอง':thick==='isf'?'ISF':thick+' มม.',saleLabel=$('saleType').value==='installed'?'พร้อมบริการติดตั้ง':'เฉพาะไม้';
+let extras=[];if(skCost)extras.push(`- บัวพื้นขนาด ${skSize} นิ้ว ${skCount} เส้น × ${money(skUnit)} บาท = ${money(skCost)} บาท`);
+if(trimCost)extras.push(`- ตัวจบและคิ้วเล็ก ${trimQty} เส้น × 100 บาท = ${money(trimCost)} บาท`);
+if(doors)extras.push(`- ค่าตัดตีนประตู ${doors} บาน × 500 บาท = ${money(doorCost)} บาท`);
+if(levelCost)extras.push(`- ค่าปรับปูนเซลฟ์-เลเวลลิ่ง ${levelArea} ตร.ม. × ${money(levelRate)} บาท = ${money(levelCost)} บาท`);
+if(removeSkirtCost)extras.push(`- ค่ารื้อบัวเดิม ${num('removeSkirt')} เมตร × ${money(num('removeSkirtRate'))} บาท = ${money(removeSkirtCost)} บาท`);
+if(removeCost)extras.push(`- ค่ารื้อพื้นเดิม ${num('removeArea')} ตร.ม. × ${money(num('removeRate'))} บาท = ${money(removeCost)} บาท`);
+if(furnitureCost)extras.push(`- ค่าย้ายเฟอร์นิเจอร์ = ${money(furnitureCost)} บาท`);
+if(minAreaCost)extras.push(`- ค่าส่วนต่างพื้นที่ติดตั้งต่ำกว่า 20 ตร.ม. (${money(20-area)} ตร.ม. × 300 บาท) = ${money(minAreaCost)} บาท`);
+if(other)extras.push(`- ${$('otherLabel').value||'ค่าบริการเพิ่มเติม'} = ${money(other)} บาท`);
+let materialSk=skCount?`${skCount} เส้น${skUnit===0?' (ฟรี)':''}`:'ตามหน้างานจริง'+(skUnit===0?' (ฟรี)':'');
+let trims=trimTypes.filter(t=>num('trim_'+t)>0).map(t=>`- ${t==='คิ้วเล็ก'?'คิ้วเล็ก':'ตัวจบ '+t} จำนวน ${num('trim_'+t)} เส้น${$('saleType').value==='material'?' × 100 บาท = '+money(num('trim_'+t)*100)+' บาท':' (ฟรี)'}`);
+let note=$('customNote').value.trim();
+let isMaterial=$('saleType').value==='material';
+let productName=thick==='isf'?'ISF':`SPC ${name}`;
+let lines=[
+isMaterial?'รายละเอียดสินค้า':'รายละเอียดหลังเข้าวัดพื้นที่','',`พื้นที่หน้างาน ${area} ตร.ม.`,'',`${productName} ปู${lay} ${saleLabel} ราคา ${money(discounted)}.-/ตร.ม. (${discount?'ปกติราคา '+price+'.-':'ราคาปกติ'})`,'',`1 กล่องมี ${planks} แผ่น ปูได้ ${coverage} ตร.ม. ราคากล่องละ ${money(boxPrice)} บาท`,'',`พื้นที่ ${area} ตร.ม. + เผื่อไม้ ${waste}% (สำหรับการตัดไม้เข้ามุม) = ${money(required)} ตร.ม.`,'',`ใช้ไม้ทั้งหมด ${boxes} กล่อง ราคา ${money(floor)} บาท`,'',
+...(extras.length?['รายการเพิ่มเติม',...extras,'']:[]),`ยอดรวมทั้งหมด ${money(total)} บาท`,'',...(deposit?[`หักค่ามัดจำวัดพื้นที่ ${money(deposit)} บาท`]:[]),'',`ยอดสุทธิทั้งหมด ${money(net)} บาท`,'','────────────────────────',
+'รายการวัสดุ','',`พื้นที่หน้างาน ${area} ตร.ม. ใช้ ${productName} ปู${lay}`,'',`- ${productName} จำนวน ${boxes} กล่อง`,...(isMaterial&&!skCount?[]:[`- บัวพื้นขนาด ${skSize} นิ้ว จำนวน ${materialSk}`]),...trims,...(doors?[`- ตัดตีนประตูจำนวน ${doors} บาน`]:[]),'',
+...(!isMaterial?['ขั้นตอนการสั่งซื้อและรับบริการติดตั้งพื้น',''] : []),
+...(!isMaterial?['1. นัดหมายเข้าวัดพื้นที่',`มีค่าบริการเข้าวัดพื้นที่จริง ${money(deposit)} บาท เพื่อดำเนินการจองคิวทีมช่างค่ะ`,'',
+'2. ทีมช่างเข้าประเมินหน้างาน','เพื่อวัดพื้นที่จริง ตรวจสอบความพร้อมของหน้างาน และสรุปรายละเอียดการติดตั้งค่ะ','',
+'3. สรุปใบเสนอราคา',`ค่าบริการเข้าวัดพื้นที่ ${money(deposit)} บาท สามารถนำไปหักจากยอดสั่งซื้อได้ค่ะ`,'',
+'4. ชำระเงินและนัดวันติดตั้ง','หลังชำระเงินเรียบร้อย ทางบริษัทจะดำเนินการจัดส่งสินค้าและนัดหมายวันติดตั้งค่ะ','',
+'หมายเหตุ ‼️','',
+`กรณีไม่สะดวกดำเนินการต่อ ขอสงวนสิทธิ์ไม่คืนค่าบริการเข้าวัดพื้นที่ ${money(deposit)} บาทค่ะ และการมัดจำถือเป็นค่าบริการวัดพื้นที่เท่านั้น (ยังไม่ใช่การจองสินค้า)`, 'สำคัญ: สำหรับบริการพร้อมติดตั้ง พื้นที่ขั้นต่ำ 20 ตร.ม. หากพื้นที่ไม่ถึง 20 ตร.ม. จะมีค่าส่วนต่างเพิ่มเติม 300 บาท/ตร.ม. ตามพื้นที่ที่ขาด', 'สำคัญ: ค่ามัดจำวัดพื้นที่สามารถนำไปหักจากยอดสั่งซื้อได้เฉพาะเมื่อซื้อสินค้าพร้อมบริการติดตั้งกับทางบริษัทเท่านั้น','',
+'- หลังจากพี่ช่างเข้าประเมินหน้างานเรียบร้อยแล้ว แอดมินจะนำข้อมูลและแบบแปลนมาคำนวณปริมาณวัสดุ พร้อมจัดทำใบเสนอราคาอย่างละเอียดส่งให้คุณลูกค้าพิจารณาอีกครั้งค่ะ',
+'- เมื่อคุณลูกค้าตรวจสอบรายละเอียดและพึงพอใจในใบเสนอราคาแล้ว สามารถชำระเต็มจำนวนเพื่อยืนยันคำสั่งซื้อสินค้าพร้อมติดตั้งได้เลยค่ะ หลังจากชำระเงินเรียบร้อย ระบบจะดำเนินการล็อกสินค้าและเตรียมจัดส่งไปยังหน้างาน โดยปกติใช้เวลาจัดส่งประมาณ 3–5 วันทำการ (ไม่รวมวันเสาร์–อาทิตย์ และวันหยุดนักขัตฤกษ์) ค่ะ',
+'- เมื่อสินค้าจัดส่งถึงหน้างานเรียบร้อยแล้ว คุณลูกค้าสามารถแจ้งแอดมินเพื่อนัดหมายวันเข้าไปติดตั้งได้ตามวันที่สะดวก โดยทางเราจะประสานงานกับทีมช่างให้เข้าดำเนินการติดตั้งให้ค่ะ','']:[]),
+...(!isMaterial?['📌 รายละเอียดค่าบริการเพิ่มเติม','']:['📌 ราคาวัสดุเพิ่มเติม','']),
+'✅ บัวพื้นและตัวจบ',isMaterial?'กรณีซื้อเฉพาะไม้ คิดราคาบัวเต็มตามขนาดและจำนวนที่เลือก':thick==='8'?'SPC 8 มม. ฟรีบัวทุกขนาด':'SPC 5 และ 6 มม. ฟรีบัว 2 นิ้ว\nบัว 3 นิ้ว เพิ่ม 15 บาท/เส้น และ 4 นิ้ว เพิ่ม 30 บาท/เส้น','',
+'ตัวจบ T1, T2, T3, T4 และคิ้วเล็ก: '+(isMaterial?'100 บาท/เส้น':'ฟรีเมื่อซื้อพร้อมติดตั้ง'),'','ราคาบัวปกติ','- 2 นิ้ว ราคา 120 บาท/เส้น','- 3 นิ้ว ราคา 135 บาท/เส้น','- 4 นิ้ว ราคา 150 บาท/เส้น','',
+...(!isMaterial?['✅ ค่าแรงปรับปูนเซลฟ์-เลเวลลิ่ง','- ปรับปูนแบบบาง ความหนาไม่เกิน 5 มม. 350 บาท/ตร.ม.','- ปรับปูนแบบบาง ความหนาระหว่าง 5–10 มม. 650 บาท/ตร.ม.','',
+'✅ ค่ารื้อถอนและบริการเพิ่มเติม',
+'- รื้อบัวเดิม 20 บาท/เมตร',
+'- รื้อพื้นกระเบื้อง 200 บาท/ตร.ม.',
+'- รื้อพื้นลามิเนต 80 บาท/ตร.ม.',
+'- รื้อกระเบื้องยางแบบติดแน่น 150 บาท/ตร.ม.',
+'- รื้อพื้น SPC 80 บาท/ตร.ม.',
+'- รื้อไม้จริง 110–200 บาท/ตร.ม.',
+'- รื้อไม้กระดาน 150 บาท/ตร.ม.',
+'- รื้อพรม/พรมติดแน่น 80–150 บาท/ตร.ม.',
+'- รื้อสมาร์ทบอร์ด 140 บาท/ตร.ม.',
+'- ตัดตีนประตู 500 บาท/บาน',
+'- ย้ายเฟอร์นิเจอร์แบบเหมา ขนาด S–XL ประมาณ 500–2,000 บาท (ประเมินตามหน้างาน)',
+'- พื้นที่ติดตั้งขั้นต่ำ 20 ตร.ม. หากต่ำกว่าเกณฑ์คิดส่วนต่าง 300 บาท/ตร.ม. ตามพื้นที่ที่ขาด',
+'หมายเหตุ: อัตราที่เป็นช่วงราคาต้องประเมินและยืนยันตามสภาพหน้างานก่อนเสนอราคา','']:[]),
+...(isMaterial&&!note?[]:['หมายเหตุเพิ่มเติมสำหรับหน้างานนี้',note||`ราคาพื้น SPC ${name} ${discount?'เป็นราคาโปรโมชั่นลด '+discount+'% จากราคาปกติ':'เป็นราคาปกติ'}${doors?' โดยค่าตัดตีนประตู '+doors+' บาน รวมอยู่ในยอดสุทธิเรียบร้อยแล้วค่ะ':'ค่ะ'}`])
+];
+$('quote').textContent=lines.join('\n');document.querySelector('.total span').textContent=isMaterial?'ยอดสุทธิสินค้า':'ยอดสุทธิหลังหักมัดจำ';$('net').textContent=money(net)+' บาท';$('stats').textContent=`${boxes} กล่อง · เผื่อไม้ ${waste}% · ยอดรวม ${money(total)} บาท`;
+}
+document.querySelectorAll('input,select,textarea').forEach(el=>{if(!['thickness','pattern','saleType'].includes(el.id))el.addEventListener('input',render)});
+$('copy').onclick=async()=>{let t=$('quote').textContent;try{await navigator.clipboard.writeText(t)}catch(e){let a=document.createElement('textarea');a.value=t;document.body.appendChild(a);a.select();document.execCommand('copy');a.remove()}$('copy').textContent='คัดลอกแล้ว ✓';setTimeout(()=>$('copy').textContent='คัดลอกใบเสนอราคาฉบับเต็ม',1700)};
+$('removeType').addEventListener('change',()=>{$('removeRate').value=$('removeType').value;render()});
+$('modeInstalled').onclick=()=>{$('saleType').value='installed';applyPreset()};$('modeMaterial').onclick=()=>{$('saleType').value='material';applyPreset()};$('print').onclick=()=>window.print();applyPreset();
+</script></body></html>
